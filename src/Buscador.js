@@ -11,13 +11,15 @@ class Buscador extends Component {
     }
     
     buscarHistoriaClinica = (p) => {
-        this.setState({pacientes:[]})
-        this.setState({paciente:p})
-        this.setState({hayPaciente:true})
+        this.setState({ pacientes:[] })
+        this.setState({ paciente:p })
+        this.setState({ hayPaciente:true })
         this.props.getPaciente(p);
+        
     }
 
     buscarPaciente = async(nombre) => {
+        this.setState({ hayPaciente:false })
         const paciente = await window.api.getPaciente({ nombre: nombre });
         Promise.all(paciente).then(res => { this.setState({ pacientes:res }) });
     }
