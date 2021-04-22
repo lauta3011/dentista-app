@@ -1,0 +1,17 @@
+.ListaPacientes{
+    position: absolute;
+    width: 30%;
+    background-color: white;
+    left: 30%;
+    border: 1px solid;
+}
+
+.Paciente{
+    background-color: lightblue;
+    margin: 5px;
+    padding: 5px;
+}
+
+.Paciente:hover{
+    background-color: lightgrey;
+}
