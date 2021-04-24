@@ -45,7 +45,6 @@ ipcMain.on('get-consultas', async(event, arg) => {
   data.forEach((row) => { 
     rows.push(row);
   })
-  
     event.sender.send('return-consultas', rows);
   });
 });
@@ -56,13 +55,9 @@ ipcMain.on('get-historia-clinica', async(event, arg) => {
   ' FROM Consulta c, Paciente p WHERE p.Cedula = c.Paciente AND c.Paciente LIKE ?', '%' + arg.cedula + '%', async(err, data) => {
     if(err){
     console.log('err')
-  }    
+  }      
 
-  data.forEach((row) => {
-    rows.push(row);
-  })
-  
-    event.sender.send('return-historia', rows);
+  event.sender.send('return-historia', data);
   });
 });
 
@@ -77,7 +72,7 @@ ipcMain.on('get-paciente', async(event, args) => {
 })
 
 ipcMain.handle('post-agregar-consulta', (event, args) => {
-  db.run('INSERT INTO Consulta(Paciente, Descripcion, Tipo, Fecha, Hora, Costo, Archivo, Completada) VALUES(?,?,?,?,?,?,?,?)', [args.nombre, args.descripcion, 'TIPO TEST', '01/01/2000', 'args.hora', 3000, 'args.archivo', true], (err) => {
+  db.run('INSERT INTO Consulta(Paciente, Descripcion, Tipo, Fecha, Hora, Costo, Archivo, Completada) VALUES(?,?,?,?,?,?,?,?)', [args.consulta.paciente, args.consulta.descripcion, 'TIPO TEST', args.consulta.fecha, args.consulta.hora, 3000, 'args.archivo', true], (err) => {
     if(err){
       console.log(err);
     }

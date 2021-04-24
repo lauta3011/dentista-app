@@ -1,0 +1,23 @@
+.Tabla{
+    margin: 5px;
+}
+
+.Tabla table{
+    position: relative;
+    width: 95% !important;
+    left: 3%;
+    border-collapse: collapse;
+}
+
+.Tabla thead{
+    background-color: lightgrey;
+}
+
+.Tabla td{
+    padding: 5px;
+    border: 1px solid lightgrey;
+}
+
+.Tabla tr:hover{
+    background-color: #d3d3d357;
+}

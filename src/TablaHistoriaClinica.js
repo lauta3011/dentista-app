@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './Tabla.css';
 
 class TablaHistoriaClinica extends Component {
 
@@ -7,7 +8,7 @@ class TablaHistoriaClinica extends Component {
 
         if(this.props.historia.nombre !== 'vacio'){
             tabla = (
-                    <div>
+                    <div className="Tabla">
                         <table>
                             <thead>
                                 <tr>
@@ -18,14 +19,14 @@ class TablaHistoriaClinica extends Component {
                                 </tr>
                             </thead>
                         <tbody>
-                            {/* {this.props.historia.map((c, index) => (
+                            {this.props.historia.map((c, index) => (
                                 <tr key={index}>
                                     <td>{c.Fecha}</td>
                                     <td>{c.Hora}</td>
                                     <td>{c.Descripcion}</td>
                                     <td>{c.Completada}</td>
                                 </tr>
-                            ))} */}
+                            ))}
                         </tbody>
                     </table>
                 </div>
@@ -33,7 +34,7 @@ class TablaHistoriaClinica extends Component {
         }else{
             tabla = (
                 <div>
-                    <span>fa ta vacio esto man</span>
+                    {/* <span>No hay ningun paciente seleccionado.</span> */}
                 </div>
             )
         }

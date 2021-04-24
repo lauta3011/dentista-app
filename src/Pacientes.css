@@ -1,9 +1,9 @@
 .ListaPacientes{
-    position: absolute;
-    width: 30%;
+    /* position: absolute; */
+    z-index: 1;
+    /* width: 30%; */
     background-color: white;
-    left: 30%;
-    border: 1px solid;
+    /* left: 30%; */
 }
 
 .Paciente{

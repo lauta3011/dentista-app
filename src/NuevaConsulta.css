@@ -1,7 +1,17 @@
-.contenedor input{
-    width: 80%;
+.NuevaConsulta{
+    display: flex;
 }
- /*
-.contenedor input[type="checkbox"]{
-    width: 10%;
-} */
+.Input textarea{
+    width: 100%;
+} 
+
+.InnerContenedor{
+    width: 45%;
+    padding: 25px;
+}
+
+.Submit{
+    margin-top: 25px;
+    width: 100%;
+    padding: 5px;
+}

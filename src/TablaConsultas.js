@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import './Tabla.css';
 
 class TablaConsultas extends Component {
     state = {  }
     render() { 
         return (  
-            <div>
+            <div className="Tabla">
                 <table>
                     <thead>
                         <tr>

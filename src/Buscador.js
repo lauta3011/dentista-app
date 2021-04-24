@@ -31,15 +31,15 @@ class Buscador extends Component {
         if( !flag ){
             paciente = <Pacientes seleccionarPaciente={(paciente) => this.buscarHistoriaClinica(paciente)} listaPacientes={this.state.pacientes} />;
         }
-        else
-        {
-            paciente = <span>{this.state.paciente.Nombre}</span>;
-        }
+        // else
+        // {
+        //     paciente = <span>{this.state.paciente.Nombre}</span>;
+        // }
 
         return (  
             <div className="Buscador">
                 <div>
-                    <input type="text" onChange={(e) => { this.setState({nombre:e.target.value}) }} placeholder="Buscar paciente"/>
+                    <input type="text" onChange={(e) => { this.setState({nombre:e.target.value}) }} value={this.state.nombre} placeholder="Nombre del paciente"/>
                     <input type="button" onClick={() => { this.buscarPaciente(this.state.nombre); }} value='Buscar'/>
                 </div>
 
