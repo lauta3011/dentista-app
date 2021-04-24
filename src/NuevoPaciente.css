@@ -1,14 +1,26 @@
 .NuevoPaciente{
     display: inline-grid;
-    width: 80%;
+    width: 30%;
 }
 
-.NuevoPaciente input{
+.Input{
     margin-top: 15px;
-    width: 100%;
     padding: 5px;
 }
 
-.NuevoPaciente input[type=submit]{
-    padding: 10px;
+.Input label{
+    float: left;
+}
+
+.Input input{
+    width: 100%;
+}
+
+.Submit{
+    margin: 15px 0;
+}
+
+.Submit input{
+    width: 100%;
+    padding: 5px;
 }

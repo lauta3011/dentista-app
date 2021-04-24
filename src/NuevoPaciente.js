@@ -8,18 +8,6 @@ class NuevoPaciente extends Component {
         cedula : ""
      }
 
-    cambiarNombre = (event) => {
-        this.setState({nombre : event.target.value})
-    }
-    
-    cambiarTelefono = (event) => {
-        this.setState({telefono : event.target.value})
-    }
-    
-    cambiarCedula = (event) => {
-        this.setState({cedula : event.target.value}) 
-    }
-
     handleSubmit = async(event) => {
         
         let nombre = this.state.nombre;
@@ -45,12 +33,28 @@ class NuevoPaciente extends Component {
                     <h2>Agregar un paciente</h2>
                     <p>Completa este formulario con los datos del paciente a agregar.</p>
                 </div>
-                <form onSubmit={this.handleSubmit} className="NuevoPaciente">
-                    <input type="text" value={this.state.nombre} onChange={this.cambiarNombre} placeholder="Nombre y apellido"/>
-                    <input type="text" value={this.state.telefono} onChange={this.cambiarTelefono} placeholder="Telefono"/>
-                    <input type="text" value={this.state.cedula} onChange={this.cambiarCedula} placeholder="Cedula"/>
 
-                    <input onClick={this.handleSubmit} type="button" value="Agregar paciente"/>
+                <form onSubmit={this.handleSubmit} className="NuevoPaciente">
+
+                    <div className="Input">
+                        <label htmlFor="txtNombre">Nombre completo</label>
+                        <input id="txtNombre" type="text" value={this.state.nombre} onChange={(e) => { this.setState({ nombre:e.target.value }) }} />
+                    </div>
+
+                    <div className="Input">
+                        <label htmlFor="txtCedula">Cedula</label>
+                        <input id="txtCedula" type="text" value={this.state.cedula} onChange={(e) => { this.setState({ cedula:e.target.value }) }} />
+                    </div>
+
+                    <div className="Input">
+                        <label htmlFor="txtTelefono">Telefono</label>
+                        <input id="txtTelefono" type="text" value={this.state.telefono} onChange={(e) => { this.setState({ telefono:e.target.value }) }} />
+                    </div>
+
+                    <div className="Submit">
+                        <input onClick={this.handleSubmit} type="button" value="Agregar paciente"/>
+                    </div>
+
                 </form>
             </div>
         );
