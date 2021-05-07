@@ -8,6 +8,7 @@ class NuevaConsulta extends Component {
         nombre: '',
         fecha : '',
         hora: '',
+        costo: '',
         tipo: 'Ortodoncia',
         archivo:'',
         completada : false,
@@ -16,10 +17,16 @@ class NuevaConsulta extends Component {
 
     handleSubmit = async() => {
         
+        let formatFecha = this.state.fecha.replace(new RegExp('-','g'), '');
+        let formatHora = this.state.hora.replace(':','');
+        let id = this.state.paciente + formatFecha + formatHora+ '';
+        
         let consulta = {
+            identificador : id,
             cedula: this.state.paciente,
             nombre: this.state.nombre,
             fecha: this.state.fecha,
+            costo: this.state.costo,
             hora: this.state.hora,
             tipo: this.state.tipo,
             archivo: this.state.archivo,
@@ -28,10 +35,10 @@ class NuevaConsulta extends Component {
         };
          
         if((consulta.cedula !== "" && consulta.cedula !== " ") && (consulta.fecha !== "" && consulta.fecha !== " ") && 
-            (consulta.descripcion !== "" && consulta.descripcion !== " ") )
+            (consulta.descripcion !== "" && consulta.descripcion !== " ") && (consulta.costo !== "" && consulta.costo !== " "))
         {
             console.log(consulta)
-            // await window.api.postAgregarConsulta({ consulta: this.state.consulta });
+            await window.api.postAgregarConsulta({ consulta: consulta });
         }
         else
         {
@@ -44,9 +51,9 @@ class NuevaConsulta extends Component {
         let nombre;
 
         if(this.state.nombre === ''){
-            nombre = <div><h2 style={{marginBottom:"0"}}>Seleccionar paciente</h2></div>
+            nombre = <div><h2 style={{margin:"0"}}>Seleccionar paciente</h2></div>
         }else{
-            nombre = (<div><h2 style={{marginBottom:"0"}}>{this.state.nombre}</h2></div>)
+            nombre = (<div><h2 style={{margin:"0"}}>{this.state.nombre}</h2></div>)
         }
 
         return (  
@@ -72,6 +79,12 @@ class NuevaConsulta extends Component {
                             <label htmlFor="txtHora">Hora</label>
                             <input id="txtHora" onChange={(e) => { this.setState({ hora:e.target.value }) }} type="time" />
                         </div>
+
+                        <div className="Input">
+                            <label htmlFor="txtCosto">Costo</label>
+                            <input id="txtCosto" type="text" value={this.state.costo} onChange={(e) => {this.setState({costo:e.target.value})}}/>
+                        </div>                    
+
                     </div>
 
                     <div className="InnerContenedor" style={{borderLeft:"1px solid lightgray"}}>
@@ -97,10 +110,10 @@ class NuevaConsulta extends Component {
                         <div className="Input">
                             <label htmlFor="chkCompletada">Completada? </label><input id="chkCompletada" style={{width:"10%"}} onChange={(e) => { this.setState({ completada:e.target.value })}} defaultChecked={false} type="checkbox"/>
                         </div>
-                    
+
                         <div className="Input">
                             <label htmlFor="flArchivo">Agregar un archivo</label>
-                            <input id="flArchivo" type="file" accept="image" onChange={(e) => { this.setState({archivo:e.target.value})}} multiple/>
+                            <input id="flArchivo" type="file" accept="image" onChange={(e) => { this.setState({archivo:e.target.files[0].name}); }} />
                         </div>
 
                         <input className="Submit" onClick={this.handleSubmit} type="button" value="Crear consulta"/>

@@ -9,6 +9,13 @@ contextBridge.exposeInMainWorld('api', {
       ipcRenderer.once('return-paciente', (_, result) => { resolve(result) });
     })
   },
+
+  getArchivos: (args) => {
+    return new Promise(resolve => {
+      ipcRenderer.send('get-archivos', args);
+      ipcRenderer.on('return-archivos', (_, result) => { resolve(result) });
+    })
+  },
   
   getHistoriaClinica: (args) => {
     return new Promise(resolve => {
@@ -26,6 +33,7 @@ contextBridge.exposeInMainWorld('api', {
 
   // getDetalleConsultas: (args) => ipcRenderer.invoke('get-consultas', args, ),
   
+  postAgregarArchivos: (args) => ipcRenderer.invoke('post-archivos', args),
   
   postAgregarConsulta: (args) => ipcRenderer.invoke('post-agregar-consulta', args),
 
