@@ -36,7 +36,7 @@ const createWindow = () => {
 
 ipcMain.on('get-consultas', async(event, arg) => {
   let rows = [];
-  db.all('SELECT p.Nombre as Nombre, c.Fecha, c.Hora, c.Descripcion, c.Completada' +
+  db.all('SELECT p.Nombre as Nombre, c.Fecha, c.Hora, c.Descripcion, c.Completada, c.Costo, c.Identificador' +
   ' FROM Consulta c, Paciente p WHERE p.Cedula = c.Paciente ORDER BY Paciente', [], async(err, data) => {
   if(err){
     console.log(err);
@@ -48,6 +48,18 @@ ipcMain.on('get-consultas', async(event, arg) => {
     event.sender.send('return-consultas', rows);
   });
 });
+
+ipcMain.on('get-archivos', async(event, args) => {
+  db.all('SELECT a.Nombre FROM Archivos a, Consulta c WHERE c.Identificador = a.Consulta AND c.Identificador = ?', args.identificador, async(err, data) =>{
+    if(err){
+      console.log(err);
+    }
+    console.log(args.identificador);
+    console.log(data);
+
+    event.sender.send('return-archivos', data);
+  })
+})
 
 ipcMain.on('get-historia-clinica', async(event, arg) => {
   let rows = [];
@@ -71,12 +83,37 @@ ipcMain.on('get-paciente', async(event, args) => {
   })
 })
 
-ipcMain.handle('post-agregar-consulta', (event, args) => {
-  db.run('INSERT INTO Consulta(Paciente, Descripcion, Tipo, Fecha, Hora, Costo, Archivo, Completada) VALUES(?,?,?,?,?,?,?,?)', [args.consulta.paciente, args.consulta.descripcion, 'TIPO TEST', args.consulta.fecha, args.consulta.hora, 3000, 'args.archivo', true], (err) => {
+ipcMain.handle('post-agregar-consulta', (_, args) => {
+  
+  db.serialize(() => {
+    db.run('INSERT INTO Consulta(Identificador, Paciente, Descripcion, Tipo, Fecha, Hora, Costo, Completada) VALUES(?,?,?,?,?,?,?,?)',
+     [args.consulta.identificador, args.consulta.cedula, args.consulta.descripcion, args.consulta.tipo, args.consulta.fecha, args.consulta.hora, args.consulta.costo, true], (err) => {
+      if(err){
+        console.log(err);
+      }
+      console.log('consulta agregada! ');
+    })
+    
+    if(args.archivo !== ''){
+      db.run('INSERT INTO Archivos(Imagen, Nombre, Consulta) VALUES(?,?,?)', ['imagen', args.consulta.archivo, args.consulta.identificador], (err) => {
+            if(err){
+              console.log(err);
+            }
+            console.log('agrego archivo');
+        })
+    }
+  });
+  console.log('tudo bom');
+})
+
+ipcMain.handle('post-archivos', async(event,args) => {
+  db.run('INSERT INTO Archivos(Nombre, Consulta) VALUES(?,?)', [args.Nombre, 4], (err) => {
     if(err){
       console.log(err);
     }
-    console.log('row agregada!');
+
+    console.log('agrego archivo');
+    return 'arcvhivo agregado'
   })
 })
 
