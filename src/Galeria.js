@@ -1,19 +1,18 @@
 import React, { Component } from 'react';
+import Imagen from './Imagen.js';
 import './Galeria.css';
 
 class Galeria extends Component {
-    state = {  
-        imagenes : this.props.galeria
-    }
     render() { 
+
         return (
             <div className="Galeria">
-                {this.state.imagenes.map((i, index) => (
-                    <div key={index} className="imagen">
-                        <span>{i}</span>
-                    </div>                
-                ))}
-            </div>
+            {this.props.galeria.map((i, index) => (
+                <div key={index} className="imagen">
+                    <Imagen imagen={"http://localhost:8080/" + this.props.galeria[index]}/>
+                </div>                
+            ))}
+        </div>
         );
     }
 }

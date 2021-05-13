@@ -50,14 +50,16 @@ ipcMain.on('get-consultas', async(event, arg) => {
 });
 
 ipcMain.on('get-archivos', async(event, args) => {
+  let rows = [];
+  let archivos;
   db.all('SELECT a.Nombre FROM Archivos a, Consulta c WHERE c.Identificador = a.Consulta AND c.Identificador = ?', args.identificador, async(err, data) =>{
     if(err){
       console.log(err);
     }
-    console.log(args.identificador);
-    console.log(data);
 
-    event.sender.send('return-archivos', data);
+    archivos = data[0].Nombre.split(',');
+
+    event.sender.send('return-archivos', archivos);
   })
 })
 
@@ -103,7 +105,6 @@ ipcMain.handle('post-agregar-consulta', (_, args) => {
         })
     }
   });
-  console.log('tudo bom');
 })
 
 ipcMain.handle('post-archivos', async(event,args) => {
