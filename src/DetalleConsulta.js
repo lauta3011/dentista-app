@@ -1,11 +1,8 @@
-import React, { useState } from 'react';
-import './DetalleConsulta.css';
+import React from 'react';
 import Galeria from './Galeria.js'
+import './DetalleConsulta.css';
 
-function DetalleConsulta(props) {
-    let src = "http://localhost:8080/" + props.archivos[0] ;
-    let imagen = (<div><img src={src} /></div>);
-        
+function DetalleConsulta(props) {  
     return (              
         <div style={{display:props.mostrar}} className="Modal">
             <div onClick={() => props.handleCerrarModal()} className="FondoModal"></div>
@@ -19,7 +16,6 @@ function DetalleConsulta(props) {
                 </div>
 
                 <div className="InfoConsulta">
-                        {imagen}
                     <div className="Info">
                         <div className="contenedor"><label>Descripcion: </label><span>{props.consulta.Descripcion}</span></div>
                         <div className="contenedor"><label>Tipo: </label><span>{props.consulta.Tipo}</span></div>
@@ -33,10 +29,9 @@ function DetalleConsulta(props) {
                         <input type="file" accept="image" multiple/>
                         
                         <div className="GaleriaArchivos">
-                            {/* <Galeria galeria={archivos}/> */}
+                            <Galeria galeria={props.listaArchivos}/>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>  

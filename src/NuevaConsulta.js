@@ -10,7 +10,7 @@ class NuevaConsulta extends Component {
         hora: '',
         costo: '',
         tipo: 'Ortodoncia',
-        archivo:'',
+        archivo: [],
         completada : false,
         descripcion : ''
     }
@@ -21,6 +21,15 @@ class NuevaConsulta extends Component {
         let formatHora = this.state.hora.replace(':','');
         let id = this.state.paciente + formatFecha + formatHora+ '';
         
+        let listaArchivos = [];
+        
+        for(var i = 0; i < this.state.archivo.length; i++){
+            listaArchivos.push(this.state.archivo[i].name);
+        }
+
+        console.log(listaArchivos);
+        // console.log(this.state.archivo.files.length);
+
         let consulta = {
             identificador : id,
             cedula: this.state.paciente,
@@ -29,7 +38,7 @@ class NuevaConsulta extends Component {
             costo: this.state.costo,
             hora: this.state.hora,
             tipo: this.state.tipo,
-            archivo: this.state.archivo,
+            archivo: listaArchivos,
             completada: this.state.completada,
             descripcion: this.state.descripcion
         };
@@ -113,7 +122,7 @@ class NuevaConsulta extends Component {
 
                         <div className="Input">
                             <label htmlFor="flArchivo">Agregar un archivo</label>
-                            <input id="flArchivo" type="file" accept="image" onChange={(e) => { this.setState({archivo:e.target.files[0].name}); }} />
+                            <input id="flArchivo" type="file" accept="image" onChange={(e) => { this.setState({archivo:e.target.files});}} multiple />
                         </div>
 
                         <input className="Submit" onClick={this.handleSubmit} type="button" value="Crear consulta"/>

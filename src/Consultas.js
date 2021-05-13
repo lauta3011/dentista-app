@@ -4,24 +4,21 @@ import TablaConsultas from './TablaConsultas.js';
 import './Consultas.css';
 
 function Consultas(props){
-
     const [mostrar, setMostrar] = useState('none');
     const [detalle, setDetalle] = useState({});
     const [archivos, setArchivos] = useState([]);
 
     const traerArchivos = async(identificador) => {
-        console.log(identificador);
         const lista = await window.api.getArchivos({ identificador: identificador});
         const listaArchivos = [];
         
         lista.map(a => (
-            listaArchivos.push(a.Nombre)
+            listaArchivos.push(a)
         ));
         setArchivos(listaArchivos);
     }
-
     const consultas = props.consultas;
-
+    
     return (
         <div className="Consultas">
             <div>
@@ -30,8 +27,7 @@ function Consultas(props){
             </div>
 
             <TablaConsultas mostrarDetalleConsulta={(consulta) => { setDetalle(consulta); setMostrar('initial'); traerArchivos(consulta.Identificador)}} listaConsultas={consultas} />
-            <DetalleConsulta mostrar={mostrar} handleCerrarModal={() => setMostrar('none')} archivos={archivos} consulta={detalle} />
-            
+            <DetalleConsulta mostrar={mostrar} handleCerrarModal={() => setMostrar('none')} listaArchivos={archivos} consulta={detalle} />
         </div>
     );
 }
