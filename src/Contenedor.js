@@ -8,11 +8,21 @@ import HistoriaClinica from './HistoriaClinica';
 function Contenedor() {    
     const [mostrar, setMostrar] = useState('consultas');
     const [consultas, setConsultas] = useState([]);
+    const [archivos, setArchivos] = useState();
     
     document.addEventListener("DOMContentLoaded", async function(event) { 
-        const lista = await window.api.getConsultas();
-        setConsultas(lista);
+        traerConsultas('hoy');
     });
+
+    const eliminarConsulta = async(identificador) => {
+        const eliminado = await window.api.deleteConsulta({ identificador:identificador });
+        console.log(eliminado);
+    } 
+
+    const traerConsultas = async(cuando, cedula) => {
+        const lista = await window.api.getConsultas({ cuando:cuando, cedula:cedula });
+        setConsultas(lista);
+    }
 
     let contenido;
 
@@ -24,13 +34,13 @@ function Contenedor() {
             contenido = <NuevaConsulta />;
             break
         case 'consultas':
-            contenido = <Consultas consultas={consultas}/>;;
+            contenido = <Consultas handleEliminarConsulta={(identificador) => {eliminarConsulta(identificador)}} handleTraerConsultas={(cuando) => {traerConsultas(cuando)}} consultas={consultas} />;
         break
         case 'historiaClinica':
-            contenido = <HistoriaClinica />;;
+            contenido = <HistoriaClinica handleEliminarConsulta={(identificador) => {eliminarConsulta(identificador)}} handleTraerHistoriaClinica={(cuando, cedula) => {traerConsultas(cuando, cedula)}} consultas={consultas}/>;
         break
         default:
-            contenido = <Consultas />;
+            contenido = <Consultas handleEliminarConsulta={(identificador) => {eliminarConsulta(identificador)}} handleTraerConsultas={(cuando) => {traerConsultas(cuando)}}/>;
     }
 
     return (  

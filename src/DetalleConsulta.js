@@ -2,7 +2,8 @@ import React from 'react';
 import Galeria from './Galeria.js'
 import './DetalleConsulta.css';
 
-function DetalleConsulta(props) {  
+function DetalleConsulta(props) { 
+    
     return (              
         <div style={{display:props.mostrar}} className="Modal">
             <div onClick={() => props.handleCerrarModal()} className="FondoModal"></div>
@@ -11,8 +12,7 @@ function DetalleConsulta(props) {
                 
                 <div className="HeaderDetalle">
                     <h2>{props.consulta.Nombre}</h2>
-                    <input type="button" value="Editar" className="ActionButton"/>
-                    <input type="button" value="Eliminar" className="ActionButton"/>
+                    <input onClick={() => {props.handleEliminarConsutla(props.consulta.Identificador)}} type="button" value="Eliminar" className="ActionButton"/>
                 </div>
 
                 <div className="InfoConsulta">
@@ -27,10 +27,11 @@ function DetalleConsulta(props) {
                     
                     <div className="SubirArchivo">
                         <input type="file" accept="image" multiple/>
-                        
+
                         <div className="GaleriaArchivos">
                             <Galeria galeria={props.listaArchivos}/>
                         </div>
+
                     </div>
                 </div>
             </div>

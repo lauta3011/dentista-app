@@ -27,9 +27,6 @@ class NuevaConsulta extends Component {
             listaArchivos.push(this.state.archivo[i].name);
         }
 
-        console.log(listaArchivos);
-        // console.log(this.state.archivo.files.length);
-
         let consulta = {
             identificador : id,
             cedula: this.state.paciente,
@@ -47,7 +44,7 @@ class NuevaConsulta extends Component {
             (consulta.descripcion !== "" && consulta.descripcion !== " ") && (consulta.costo !== "" && consulta.costo !== " "))
         {
             console.log(consulta)
-            await window.api.postAgregarConsulta({ consulta: consulta });
+           await window.api.postAgregarConsulta({ consulta: consulta });
         }
         else
         {

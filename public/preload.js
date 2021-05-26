@@ -31,7 +31,7 @@ contextBridge.exposeInMainWorld('api', {
     })
   },
 
-  // getDetalleConsultas: (args) => ipcRenderer.invoke('get-consultas', args, ),
+  deleteConsulta: (args) => ipcRenderer.invoke('delete-consulta', args),
   
   postAgregarArchivos: (args) => ipcRenderer.invoke('post-archivos', args),
   
