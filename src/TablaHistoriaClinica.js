@@ -22,11 +22,10 @@ class TablaHistoriaClinica extends Component {
                             {this.props.historia.map((c, index) => (
                                 <tr key={index}>
                                     <td>{c.Fecha}</td>
-                                    <td>{c.Descripcion}</td>
+                                    <td className="Descripcion">{c.Descripcion}</td>
                                     <td>{c.Completada}</td>
                                     <td><span onClick={() =>  this.props.handleVerDetalle(c)}>Ver detalle</span></td>
 
-                                    {/* AGREGAR EL VER DETALLE DE LA HISTORIA CLINICA  */}
                                 </tr>
                             ))}
                         </tbody>

@@ -20,14 +20,12 @@ function HistoriaClinica(props) {
     const traerArchivos = async(identificador) => {
         const lista = await window.api.getArchivos({ identificador: identificador});
         let listaArchivos = [];
-console.log(lista);
+
         if(lista !== 'vacio'){
-            console.log('entro')
             lista.map(a => (
                 listaArchivos.push(a)
                 ));
             }else {
-            console.log('ta vacio')
             listaArchivos = lista;
         }
         setArchivos(listaArchivos);

@@ -23,7 +23,7 @@ class TablaConsultas extends Component {
                                 <td>{c.Nombre} {c.Apellido}</td>
                                 <td>{c.Fecha}</td>
                                 <td>{c.Hora}</td>
-                                <td>{c.Descripcion}</td>
+                                <td className="Descripcion">{c.Descripcion}</td>
                                 <td> <input defaultChecked={c.Completada} onChange={() => this.handleCheck()} type="checkbox"/></td>
                                 <td className="VerDetalle"><span onClick={() => this.props.mostrarDetalleConsulta(c)} >Ver detalle</span> </td>
                             </tr>

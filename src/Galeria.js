@@ -10,9 +10,8 @@ function Galeria(props) {
     );
 
     if(props.galeria != 'vacio' && props.galeria != undefined){
-        console.log(props.galeria)
         componenteGaleria = (
-            <div>
+            <div style={{display:'inline-flex'}}>
                 {props.galeria.map((i, index) => (
                     <div key={index} className="imagen">
                         <Imagen imagen={"http://localhost:8080/" + props.galeria[index]}/>

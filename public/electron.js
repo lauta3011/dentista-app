@@ -76,7 +76,7 @@ ipcMain.on('get-archivos', async(event, args) => {
     if(data.length === 0){
       archivos = "vacio"
     }else  {
-      archivos = data[0].Nombre.split(',');
+      archivos = data;
     }
 
     event.sender.send('return-archivos', archivos);
@@ -131,7 +131,7 @@ ipcMain.handle('post-agregar-consulta', (_, args) => {
 
   db.serialize(() => {
     db.run('INSERT INTO Consulta(Identificador, Paciente, Descripcion, Tipo, Fecha, Hora, Costo, Completada) VALUES(?,?,?,?,?,?,?,?)',
-     [args.consulta.identificador, args.consulta.cedula, args.consulta.descripcion, args.consulta.tipo, args.consulta.fecha, args.consulta.hora, args.consulta.costo, true], (err) => {
+     [args.consulta.identificador, args.consulta.cedula, args.consulta.descripcion, args.consulta.tipo, args.consulta.fecha, args.consulta.hora, args.consulta.costo, args.consulta.completada], (err) => {
       if(err){
         console.log(err);
       }
@@ -139,10 +139,12 @@ ipcMain.handle('post-agregar-consulta', (_, args) => {
     })
     
     if(args.consulta.archivo != ''){
-      db.run('INSERT INTO Archivos(Imagen, Nombre, Consulta) VALUES(?,?,?)', ['imagen', args.consulta.archivo, args.consulta.identificador], (err) => {
-        if(err){
-          console.log(err);
-        }
+      args.consulta.archivo.map((a) => {
+        db.run('INSERT INTO Archivos(Imagen, Nombre, Consulta) VALUES(?,?,?)', ['imagen', a, args.consulta.identificador], (err) => {
+          if(err){
+            console.log(err);
+          }
+        })
       })
     }
   });
