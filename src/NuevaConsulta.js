@@ -17,24 +17,28 @@ class NuevaConsulta extends Component {
 
     handleSubmit = async() => {
         
-        let formatFecha = this.state.fecha.replace(new RegExp('-','g'), '');
+        let fecha = this.state.fecha.split('-');
+        let fixFecha = fecha[2] + '/' + fecha[1] + '/' + fecha[0];
+        let formatFecha = fixFecha.replace(new RegExp('/','g'), '');
         let formatHora = this.state.hora.replace(':','');
         let id = this.state.paciente + formatFecha + formatHora+ '';
-        
+
+        console.log(fixFecha);
+        console.log(fecha);
+        console.log(this.state.fecha);
+
+
         let listaArchivos = [];
         
         for(var i = 0; i < this.state.archivo.length; i++){
             listaArchivos.push(this.state.archivo[i].name);
         }
 
-        console.log(listaArchivos);
-        // console.log(this.state.archivo.files.length);
-
         let consulta = {
             identificador : id,
             cedula: this.state.paciente,
             nombre: this.state.nombre,
-            fecha: this.state.fecha,
+            fecha: fixFecha,
             costo: this.state.costo,
             hora: this.state.hora,
             tipo: this.state.tipo,
@@ -46,7 +50,6 @@ class NuevaConsulta extends Component {
         if((consulta.cedula !== "" && consulta.cedula !== " ") && (consulta.fecha !== "" && consulta.fecha !== " ") && 
             (consulta.descripcion !== "" && consulta.descripcion !== " ") && (consulta.costo !== "" && consulta.costo !== " "))
         {
-            console.log(consulta)
             await window.api.postAgregarConsulta({ consulta: consulta });
         }
         else

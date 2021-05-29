@@ -1,12 +1,12 @@
 .ListaPacientes{
-    /* position: absolute; */
     z-index: 1;
-    /* width: 30%; */
     background-color: white;
-    /* left: 30%; */
 }
 
 .Paciente{
+    position: relative;
+    width: 50%;
+    left: 23%;
     background-color: lightblue;
     margin: 5px;
     padding: 5px;

@@ -18,6 +18,14 @@
     border: 1px solid lightgrey;
 }
 
+.Descripcion{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+    height: 10px;
+    white-space: nowrap;
+}
+
 .Tabla tr:hover{
     background-color: #d3d3d357;
 }

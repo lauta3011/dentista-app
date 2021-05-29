@@ -1,38 +1,66 @@
-import { React, Component } from 'react';
-import Buscador from './Buscador.js';
+import { React, useState } from 'react';
 import TablaHistoriaClinica from './TablaHistoriaClinica.js';
+import DetalleConsulta from './DetalleConsulta.js';
+import Buscador from './Buscador.js';
 
-class HistoriaClinica extends Component {
-    state = { 
-        historia : { nombre: 'vacio' },
-        nombre : ''
+function HistoriaClinica(props) {
+    const [mostrar, setMostrar] = useState('none');
+    const [nombre, setNombre] = useState('');
+    const [detalle, setDetalle] = useState({});
+    const [archivos, setArchivos] = useState();
+    
+    const buscarHistoriaClinica = async(cedula) => {
+        props.handleTraerHistoriaClinica('historia', cedula)
+    }   
+
+    const eliminarConsulta = (identificador) => {
+        props.handleEliminarConsulta(identificador);
     }
 
-    buscarHistoriaClinica = async(cedula) => {
-        const historiaClinica = await window.api.getHistoriaClinica({ cedula : cedula });
-        Promise.all(historiaClinica).then(res => { this.setState({ historia : res }); console.log('x aca ando', res); });
-    }    
+    const traerArchivos = async(identificador) => {
+        const lista = await window.api.getArchivos({ identificador: identificador});
+        let listaArchivos = [];
 
-    render() { 
-        let titulo;
-
-        if(this.state.nombre !== ''){
-            titulo = <h2>{this.state.nombre}</h2>
-        }else{
-            titulo = <h2>Historia clinica</h2>
+        if(lista !== 'vacio'){
+            lista.map(a => (
+                listaArchivos.push(a)
+                ));
+            }else {
+            listaArchivos = lista;
         }
-
-        return (  
-            <div>
-                <div>
-                    {titulo}
-                    <span>Busca el nombre de un paciente para traer toda su historia clinica.</span>
-                </div>
-                <Buscador getPaciente={(paciente) => {this.buscarHistoriaClinica(paciente.Cedula); this.setState({ nombre:paciente.Nombre })}}/>
-                <TablaHistoriaClinica historia={this.state.historia}/>
-            </div>
-        );
+        setArchivos(listaArchivos);
     }
+
+    let titulo;
+    let mostrarConsultas;
+
+    if(nombre !== ''){
+        titulo = <h2>{nombre}</h2>
+
+        if(props.consultas.length > 0){
+            mostrarConsultas = (
+                <div>
+                    <TablaHistoriaClinica handleVerDetalle={(consulta) => { traerArchivos(consulta.Identificador); setMostrar('initial'); setDetalle(consulta)}} historia={props.consultas} />
+                    <DetalleConsulta listaArchivos={archivos} mostrar={mostrar} consulta={detalle} handleEliminarConsulta={(identificador) => {eliminarConsulta(identificador)}} handleCerrarModal={() => { setMostrar('none'); setArchivos('vacio') }} />
+                </div>
+            )
+        }
+    }else{
+        titulo = <h2>Historia clinica</h2>
+    }
+
+    return (  
+        <div>
+            <div>
+                {titulo}
+                <span>Busca el nombre de un paciente para traer toda su historia clinica.</span>
+            </div>
+            
+            <Buscador getPaciente={(paciente) => {buscarHistoriaClinica(paciente.Cedula); setNombre(paciente.Nombre)}}/>
+            {mostrarConsultas}
+
+        </div>
+    );
 }
  
 export default HistoriaClinica;
