@@ -2,22 +2,31 @@ const { app, BrowserWindow, ipcMain } = require('electron'); // electron
 const isDev = require('electron-is-dev'); // To check if electron is in development mode
 const path = require('path');
 const sqlite3 = require('sqlite3');
-
+ 
 let mainWindow;
 
 // Initializing a new database
 const db = new sqlite3.Database(
   isDev
-    ? path.join(__dirname, '../db/database.db') // my root folder if in dev mode
+    ? path.join(__dirname, '../db/database1.db') // my root folder if in dev mode
     : path.join(process.resourcesPath, 'db/database.db'), // the resources path if in production build
   (err) => {
     if (err) {
       console.log(`Database Error: ${err}`);
     } else {
       console.log('Database Loaded');
+      crearTablas();
     }
   }
 );
+
+const crearTablas = () => {
+  db.serialize(() => {
+    db.run('CREATE TABLE IF NOT EXISTS Paciente (Nombre TEXT NOT NULL, Telefono NUMERIC NOT NULL, Cedula NUMERIC NOT NULL)');
+    db.run('CREATE TABLE IF NOT EXISTS Consulta (Paciente NUMERIC NOT NULL, Descripcion TEXT, Tipo TEXT NOT NULL, Fecha NUMERIC NOT NULL, Hora NUMERIC NOT NULL, Costo NUMERIC NOT NULL, Archivos TEXT, Completada INTEGER NOT NULL, Identificador TEXT)');
+    db.run('CREATE TABLE IF NOT EXISTS Archivos (Id INTEGER NOT NULL, Nombre TEXT NOT NULL, Consulta TEXT NOT NULL, Imagen BLOB NOT NULL)');
+  });
+}
 
 // Initializing the Electron Window
 const createWindow = () => {
@@ -34,20 +43,12 @@ const createWindow = () => {
     },
   });
 
+
 ipcMain.on('get-consultas', async(event, args) => {
   let rows = [];
   let query = 'SELECT p.Nombre as Nombre, c.Fecha, c.Hora, c.Descripcion, c.Completada, c.Costo, c.Identificador, c.Tipo FROM Consulta c, Paciente p WHERE p.Cedula = c.Paciente';
   let parameters = [];
 
-  // if (args.cuando === 'hoy'){
-  //   query += ' AND c.Fecha = DATE("now") ';
-  // }else if(args.cuando === 'manana'){
-  //   query += ' AND c.Fecha = DATE("now","+1 day") ';
-  // }else if(args.cuando == 'historia'){
-  //   query = 'SELECT p.Nombre as Nombre, c.Fecha, c.Hora, c.Descripcion, c.Completada, c.Costo, c.Identificador, c.Tipo FROM Consulta c, Paciente p WHERE p.Cedula = c.Paciente AND c.Paciente = ?';
-  //   parameters = args.cedula ;
-  // }
-    
   if(args.cuando == 'historia'){
     query = 'SELECT p.Nombre as Nombre, c.Fecha, c.Hora, c.Descripcion, c.Completada, c.Costo, c.Identificador, c.Tipo FROM Consulta c, Paciente p WHERE p.Cedula = c.Paciente AND c.Paciente = ?';
     parameters = args.cedula ;
@@ -57,17 +58,16 @@ ipcMain.on('get-consultas', async(event, args) => {
   }
 
   console.log(parameters);
-
-  db.all(query , parameters, async(err, data) => {
-    if(err){
-      console.log(err);
-    }    
-        
-    data.forEach((row) => { 
-      rows.push(row);
+    db.all(query , parameters, async(err, data) => {
+      if(err){
+        console.log(err);
+      }    
+          
+      data.forEach((row) => { 
+        rows.push(row);
+      })
+      event.sender.send('return-consultas', rows);
     })
-    event.sender.send('return-consultas', rows);
-  });
 });
 
 ipcMain.on('get-archivos', async(event, args) => {
@@ -170,7 +170,6 @@ ipcMain.handle('post-agregar-paciente', (event, args) => {
     }
     return 'agregado man'
   })
-  db.close();
 })
 
 ipcMain.handle('update-consulta', async(event, args) => {
