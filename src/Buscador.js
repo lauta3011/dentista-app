@@ -31,10 +31,6 @@ class Buscador extends Component {
         if( !flag ){
             paciente = <Pacientes seleccionarPaciente={(paciente) => this.buscarHistoriaClinica(paciente)} listaPacientes={this.state.pacientes} />;
         }
-        // else
-        // {
-        //     paciente = <span>{this.state.paciente.Nombre}</span>;
-        // }
 
         return (  
             <div className="Buscador">

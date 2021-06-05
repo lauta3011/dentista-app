@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Buscador from './Buscador';
+import TipoConsulta from './TipoConsulta';
 import './NuevaConsulta.css';
 
 class NuevaConsulta extends Component {
@@ -15,18 +16,12 @@ class NuevaConsulta extends Component {
         descripcion : ''
     }
 
-    handleSubmit = async() => {
-        
-        let fecha = this.state.fecha.split('-');
-        let fixFecha = fecha[2] + '/' + fecha[1] + '/' + fecha[0];
-        let formatFecha = fixFecha.replace(new RegExp('/','g'), '');
+    handleSubmit = async() => {        
+        // let fecha = this.state.fecha.split('-');
+        // let fixFecha = fecha[2] + '/' + fecha[1] + '/' + fecha[0];
+        let formatFecha = this.state.fecha.replace(new RegExp('/','g'), '');
         let formatHora = this.state.hora.replace(':','');
         let id = this.state.paciente + formatFecha + formatHora+ '';
-
-        console.log(fixFecha);
-        console.log(fecha);
-        console.log(this.state.fecha);
-
 
         let listaArchivos = [];
         
@@ -38,7 +33,7 @@ class NuevaConsulta extends Component {
             identificador : id,
             cedula: this.state.paciente,
             nombre: this.state.nombre,
-            fecha: fixFecha,
+            fecha: this.state.fecha,
             costo: this.state.costo,
             hora: this.state.hora,
             tipo: this.state.tipo,
@@ -47,6 +42,8 @@ class NuevaConsulta extends Component {
             descripcion: this.state.descripcion
         };
          
+        console.log(consulta);
+        
         if((consulta.cedula !== "" && consulta.cedula !== " ") && (consulta.fecha !== "" && consulta.fecha !== " ") && 
             (consulta.descripcion !== "" && consulta.descripcion !== " ") && (consulta.costo !== "" && consulta.costo !== " "))
         {
@@ -100,19 +97,7 @@ class NuevaConsulta extends Component {
                     </div>
 
                     <div className="InnerContenedor" style={{borderLeft:"1px solid lightgray"}}>
-                        <div className="Input">
-                            <label>Que tipo de consulta es?: </label>
-                            <select value={this.state.tipo} onChange={(e) => {this.setState({tipo:e.target.value})}}>
-                                <option value="Ortodoncia">Ortodoncia</option>
-                                <option value="Arreglo">Arreglo</option>
-                                <option value="Extraccion">Extraccion</option>
-                                <option value="Blanqueamiento">Blanqueamiento</option>
-                                <option value="Limpieza">Limpieza</option>
-                                <option value="Cirugia">Cirugia</option>
-                                <option value="Implante">Implante</option>
-                                <option value="Otro">Otro</option>
-                            </select>
-                        </div>
+                        <TipoConsulta seleccionarTipo={(t) => {this.setState({tipo:t})}}/>
                         
                         <div className="Input">
                             <label htmlFor="txtDescripcion">Descripcion</label>

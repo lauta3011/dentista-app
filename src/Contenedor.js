@@ -8,15 +8,9 @@ import HistoriaClinica from './HistoriaClinica';
 function Contenedor() {    
     const [mostrar, setMostrar] = useState('consultas');
     const [consultas, setConsultas] = useState([]);
-    const [archivos, setArchivos] = useState();
     
-    document.addEventListener("DOMContentLoaded", async function(event) { 
-        traerConsultas('hoy');
-    });
-
     const eliminarConsulta = async(identificador) => {
-        const eliminado = await window.api.deleteConsulta({ identificador:identificador });
-        console.log(eliminado);
+        await window.api.deleteConsulta({ identificador:identificador });
     } 
 
     const traerConsultas = async(cuando, cedula) => {

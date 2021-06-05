@@ -39,23 +39,30 @@ ipcMain.on('get-consultas', async(event, args) => {
   let query = 'SELECT p.Nombre as Nombre, c.Fecha, c.Hora, c.Descripcion, c.Completada, c.Costo, c.Identificador, c.Tipo FROM Consulta c, Paciente p WHERE p.Cedula = c.Paciente';
   let parameters = [];
 
-  if (args.cuando === 'hoy'){
-    query += ' AND c.Fecha = DATE("now") ';
-  }else if(args.cuando === 'manana'){
-    query += ' AND c.Fecha = DATE("now","+1 day") ';
-  }else if(args.cuando == 'historia'){
+  // if (args.cuando === 'hoy'){
+  //   query += ' AND c.Fecha = DATE("now") ';
+  // }else if(args.cuando === 'manana'){
+  //   query += ' AND c.Fecha = DATE("now","+1 day") ';
+  // }else if(args.cuando == 'historia'){
+  //   query = 'SELECT p.Nombre as Nombre, c.Fecha, c.Hora, c.Descripcion, c.Completada, c.Costo, c.Identificador, c.Tipo FROM Consulta c, Paciente p WHERE p.Cedula = c.Paciente AND c.Paciente = ?';
+  //   parameters = args.cedula ;
+  // }
+    
+  if(args.cuando == 'historia'){
     query = 'SELECT p.Nombre as Nombre, c.Fecha, c.Hora, c.Descripcion, c.Completada, c.Costo, c.Identificador, c.Tipo FROM Consulta c, Paciente p WHERE p.Cedula = c.Paciente AND c.Paciente = ?';
     parameters = args.cedula ;
+  }else{
+    query += ' AND c.Fecha = ? ';
+    parameters = args.cuando
   }
 
-  
+  console.log(parameters);
+
   db.all(query , parameters, async(err, data) => {
     if(err){
       console.log(err);
     }    
-    
-    console.log(data);
-    
+        
     data.forEach((row) => { 
       rows.push(row);
     })
@@ -64,15 +71,12 @@ ipcMain.on('get-consultas', async(event, args) => {
 });
 
 ipcMain.on('get-archivos', async(event, args) => {
-  let rows = [];
   let archivos;
   db.all('SELECT a.Nombre FROM Archivos a, Consulta c WHERE c.Identificador = a.Consulta AND c.Identificador = ?', args.identificador, async(err, data) =>{
     if(err){
       console.log(err);
     }
 
-    console.log(data)
-   
     if(data.length === 0){
       archivos = "vacio"
     }else  {
@@ -135,7 +139,6 @@ ipcMain.handle('post-agregar-consulta', (_, args) => {
       if(err){
         console.log(err);
       }
-      console.log('consulta agregada! ');
     })
     
     if(args.consulta.archivo != ''){
@@ -151,13 +154,12 @@ ipcMain.handle('post-agregar-consulta', (_, args) => {
 })
 
 ipcMain.handle('post-archivos', async(event,args) => {
-  db.run('INSERT INTO Archivos(Nombre, Consulta) VALUES(?,?)', [args.Nombre, 4], (err) => {
-    if(err){
-      console.log(err);
-    }
-
-    console.log('agrego archivo');
-    return 'arcvhivo agregado'
+  args.archivos.map((a) => {
+    db.run('INSERT INTO Archivos(Imagen, Nombre, Consulta) VALUES(?,?,?)', ['imagen', a, args.identificador], (err) => {
+      if(err){
+        console.log(err);
+      }
+    })
   })
 })
 
@@ -166,9 +168,20 @@ ipcMain.handle('post-agregar-paciente', (event, args) => {
     if(err){
       console.log(err);
     }
-    console.log('row agregada!');
     return 'agregado man'
   })
+  db.close();
+})
+
+ipcMain.handle('update-consulta', async(event, args) => {
+
+  let data = [args.cambios.Descripcion, args.cambios.Costo, args.cambios.Tipo, args.cambios.Identificador];
+  console.log(data);
+  db.run('UPDATE Consulta SET Descripcion = ?, Costo = ?, Tipo = ? WHERE Identificador = ?', data, (err) => {
+    if(err){
+      console.log(err);
+    }
+  });
 })
 
 // Loading a webpage inside the electron window we just created
