@@ -2,8 +2,8 @@ const { ipcRenderer, contextBridge } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {  
   
+  //GET METHODS
   getPaciente: (args) => {
-    
     return new Promise(resolve => {
       ipcRenderer.send('get-paciente', args);
       ipcRenderer.once('return-paciente', (_, result) => { resolve(result) });
@@ -31,12 +31,17 @@ contextBridge.exposeInMainWorld('api', {
     })
   },
 
-  deleteConsulta: (args) => ipcRenderer.invoke('delete-consulta', args),
-  
+  //POST METHODS
   postAgregarArchivos: (args) => ipcRenderer.invoke('post-archivos', args),
   
   postAgregarConsulta: (args) => ipcRenderer.invoke('post-agregar-consulta', args),
 
-  postAgregarPaciente: (args) => ipcRenderer.invoke('post-agregar-paciente', args)
+  postAgregarPaciente: (args) => ipcRenderer.invoke('post-agregar-paciente', args),
+
+  //DELETE METHODS
+  deleteConsulta: (args) => ipcRenderer.invoke('delete-consulta', args),
+  
+  //UPDATE METHODS
+  modifyConsulta: (args) => ipcRenderer.invoke('update-consulta', args)
 
 } );

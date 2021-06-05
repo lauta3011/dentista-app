@@ -38,12 +38,16 @@ function HistoriaClinica(props) {
         titulo = <h2>{nombre}</h2>
 
         if(props.consultas.length > 0){
-            mostrarConsultas = (
-                <div>
-                    <TablaHistoriaClinica handleVerDetalle={(consulta) => { traerArchivos(consulta.Identificador); setMostrar('initial'); setDetalle(consulta)}} historia={props.consultas} />
-                    <DetalleConsulta listaArchivos={archivos} mostrar={mostrar} consulta={detalle} handleEliminarConsulta={(identificador) => {eliminarConsulta(identificador)}} handleCerrarModal={() => { setMostrar('none'); setArchivos('vacio') }} />
-                </div>
-            )
+            if(mostrar == 'none'){
+                mostrarConsultas = (
+                    <div>
+                        <TablaHistoriaClinica handleVerDetalle={(consulta) => { traerArchivos(consulta.Identificador); setMostrar('initial'); setDetalle(consulta)}} historia={props.consultas} />
+                    </div>
+                )
+            }else{
+                // mostrarConsultas = <DetalleConsulta listaArchivos={archivos} mostrar={mostrar} consulta={detalle} handleEliminarConsulta={(identificador) => {eliminarConsulta(identificador)}} handleCerrarModal={() => { setMostrar('none'); setArchivos('vacio') }} />
+                mostrarConsultas = <DetalleConsulta mostrar={mostrar} handleEliminarConsutla={(identificador) => {eliminarConsulta(identificador)}} handleCerrarModal={() => setMostrar('none')} galeria={archivos} consulta={detalle} /> 
+            }
         }
     }else{
         titulo = <h2>Historia clinica</h2>

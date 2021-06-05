@@ -15,17 +15,16 @@ class TablaHistoriaClinica extends Component {
                                     <th>Fecha</th>
                                     <th>Hora</th>
                                     <th>Descripcion</th>
-                                    <th>Completada</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                         <tbody>
                             {this.props.historia.map((c, index) => (
                                 <tr key={index}>
                                     <td>{c.Fecha}</td>
+                                    <td>{c.Hora}</td>
                                     <td className="Descripcion">{c.Descripcion}</td>
-                                    <td>{c.Completada}</td>
-                                    <td><span onClick={() =>  this.props.handleVerDetalle(c)}>Ver detalle</span></td>
-
+                                    <td className="VerDetalle"><span onClick={() =>  this.props.handleVerDetalle(c)}>Ver detalle</span></td>
                                 </tr>
                             ))}
                         </tbody>
