@@ -19,12 +19,13 @@
     "start-react": "react-scripts start",
     "build-react": "react-scripts build",
     "start-electron": "nodemon --watch ./public/* --exec \"electron .\"",
-    "dev": "concurrently \"SET BROWSER=none && yarn start-react\" \"wait-on http://localhost:3000 && yarn start-electron\" ",
+    "dev": "concurrently \"SET BROWSER=none && yarn start-react\" \"wait-on http://localhost:3000 && yarn start-electron\" \" yarn imagenes \" ",
     "postinstall": "electron-builder install-app-deps",
     "pack-app": "yarn build-react && electron-builder --dir",
     "build": "yarn build-react && electron-builder",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "imagenes": "http-server .\\public\\imgs"
   },
   "eslintConfig": {
     "extends": [

@@ -2,12 +2,12 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    opacity: .7;
+    /* height: 100%; */
+    /* opacity: .7; */
     border-radius: 15px;
     transition: 0.5s;
 }
 
-.Imagen:hover{
+/* .Imagen:hover{
     opacity: 1;
-}
+} */

@@ -17,8 +17,6 @@ class NuevaConsulta extends Component {
     }
 
     handleSubmit = async() => {        
-        // let fecha = this.state.fecha.split('-');
-        // let fixFecha = fecha[2] + '/' + fecha[1] + '/' + fecha[0];
         let formatFecha = this.state.fecha.replace(new RegExp('/','g'), '');
         let formatHora = this.state.hora.replace(':','');
         let id = this.state.paciente + formatFecha + formatHora+ '';
@@ -26,7 +24,7 @@ class NuevaConsulta extends Component {
         let listaArchivos = [];
         
         for(var i = 0; i < this.state.archivo.length; i++){
-            listaArchivos.push(this.state.archivo[i].name);
+            listaArchivos.push({name:this.state.archivo[i].name, path:this.state.archivo[i].path});
         }
 
         let consulta = {
@@ -52,7 +50,6 @@ class NuevaConsulta extends Component {
         else
         {
             console.log(consulta)
-            console.log('eeee bobo');
         }
     }
 
