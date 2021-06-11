@@ -2,13 +2,14 @@ const { app, BrowserWindow, ipcMain } = require('electron'); // electron
 const isDev = require('electron-is-dev'); // To check if electron is in development mode
 const path = require('path');
 const sqlite3 = require('sqlite3');
- 
+const fs = require('fs');
+
 let mainWindow;
 
 // Initializing a new database
 const db = new sqlite3.Database(
   isDev
-    ? path.join(__dirname, '../db/database1.db') // my root folder if in dev mode
+    ? path.join(__dirname, '../db/database.db') // my root folder if in dev mode
     : path.join(process.resourcesPath, 'db/database.db'), // the resources path if in production build
   (err) => {
     if (err) {
@@ -42,7 +43,6 @@ const createWindow = () => {
       contextIsolation: true, // Isolating context so our app is not exposed to random javascript executions making it safer.
     },
   });
-
 
 ipcMain.on('get-consultas', async(event, args) => {
   let rows = [];
@@ -132,7 +132,6 @@ ipcMain.handle('delete-consulta', (_, args) => {
 
 
 ipcMain.handle('post-agregar-consulta', (_, args) => {
-
   db.serialize(() => {
     db.run('INSERT INTO Consulta(Identificador, Paciente, Descripcion, Tipo, Fecha, Hora, Costo, Completada) VALUES(?,?,?,?,?,?,?,?)',
      [args.consulta.identificador, args.consulta.cedula, args.consulta.descripcion, args.consulta.tipo, args.consulta.fecha, args.consulta.hora, args.consulta.costo, args.consulta.completada], (err) => {
@@ -141,9 +140,19 @@ ipcMain.handle('post-agregar-consulta', (_, args) => {
       }
     })
     
-    if(args.consulta.archivo != ''){
+    if(args.consulta.archivo.length > 0){
+      let thisPath = './public/imgs';
       args.consulta.archivo.map((a) => {
-        db.run('INSERT INTO Archivos(Imagen, Nombre, Consulta) VALUES(?,?,?)', ['imagen', a, args.consulta.identificador], (err) => {
+        let trimedPath = a.path.split('\\');
+        let shortedPath = trimedPath[trimedPath.length-3] + '\\' + trimedPath[trimedPath.length-2];        
+
+        if(shortedPath != 'public\\imgs'){
+          let newPath = __dirname + '\\imgs\\' + a.name;
+          fs.rename(a.path, newPath, function(err) {
+            if(err) { throw err; }
+          })
+        }
+        db.run('INSERT INTO Archivos(Imagen, Nombre, Consulta) VALUES(?,?,?)', ['imagen', a.name, args.consulta.identificador], (err) => {
           if(err){
             console.log(err);
           }
