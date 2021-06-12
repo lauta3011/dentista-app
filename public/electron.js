@@ -131,34 +131,46 @@ ipcMain.handle('delete-consulta', (_, args) => {
 })
 
 
-ipcMain.handle('post-agregar-consulta', (_, args) => {
-  db.serialize(() => {
+ipcMain.handle('post-agregar-consulta', (event, args) => {
+
+  db.serialize(() => {    
     db.run('INSERT INTO Consulta(Identificador, Paciente, Descripcion, Tipo, Fecha, Hora, Costo, Completada) VALUES(?,?,?,?,?,?,?,?)',
-     [args.consulta.identificador, args.consulta.cedula, args.consulta.descripcion, args.consulta.tipo, args.consulta.fecha, args.consulta.hora, args.consulta.costo, args.consulta.completada], (err) => {
+    [args.consulta.identificador, args.consulta.cedula, args.consulta.descripcion, args.consulta.tipo, args.consulta.fecha, args.consulta.hora, args.consulta.costo, args.consulta.completada], (err) => {
+     
       if(err){
         console.log(err);
+        event.sender.send('return-conslta-agregada', false);        
+      }else{
+
+        //si pudo agregar la consulta que agregue los archivos tmb
+        if(args.consulta.archivo.length > 0){
+          args.consulta.archivo.map((a) => {
+            let trimedPath = a.path.split('\\');
+            let shortedPath = trimedPath[trimedPath.length-3] + '\\' + trimedPath[trimedPath.length-2];        
+    
+            if(shortedPath != 'public\\imgs'){
+              let newPath = __dirname + '\\imgs\\' + a.name;
+              fs.rename(a.path, newPath, function(err) {
+                if(err) { 
+                  console.log(err);
+                  event.sender.send('return-conslta-agregada', false);
+                }
+              })
+            }
+            db.run('INSERT INTO Archivos(Imagen, Nombre, Consulta) VALUES(?,?,?)', ['imagen', a.name, args.consulta.identificador], (err) => {
+              if(err){
+                console.log(err);
+                event.sender.send('return-conslta-agregada', false);
+              }else{
+                event.sender.send('return-conslta-agregada', true);
+              }
+            })
+          })
+        }else{
+          event.sender.send('return-conslta-agregada', true);
+        }  
       }
     })
-    
-    if(args.consulta.archivo.length > 0){
-      let thisPath = './public/imgs';
-      args.consulta.archivo.map((a) => {
-        let trimedPath = a.path.split('\\');
-        let shortedPath = trimedPath[trimedPath.length-3] + '\\' + trimedPath[trimedPath.length-2];        
-
-        if(shortedPath != 'public\\imgs'){
-          let newPath = __dirname + '\\imgs\\' + a.name;
-          fs.rename(a.path, newPath, function(err) {
-            if(err) { throw err; }
-          })
-        }
-        db.run('INSERT INTO Archivos(Imagen, Nombre, Consulta) VALUES(?,?,?)', ['imagen', a.name, args.consulta.identificador], (err) => {
-          if(err){
-            console.log(err);
-          }
-        })
-      })
-    }
   });
 })
 
@@ -175,9 +187,11 @@ ipcMain.handle('post-archivos', async(event,args) => {
 ipcMain.handle('post-agregar-paciente', (event, args) => {
   db.run('INSERT INTO Paciente(Nombre, Telefono, Cedula) VALUES(?,?,?)', [args.nombre, args.telefono, args.cedula], (err) => {
     if(err){
+      event.sender.send('return-paciente-agregado', false);
       console.log(err);
+    }else{
+      event.sender.send('return-paciente-agregado', true);
     }
-    return 'agregado man'
   })
 })
 

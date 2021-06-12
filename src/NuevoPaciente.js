@@ -3,6 +3,7 @@ import './NuevoPaciente.css'
 
 class NuevoPaciente extends Component {
     state = { 
+        title : "inicial",
         nombre : "",
         telefono : "",
         cedula : ""
@@ -17,22 +18,42 @@ class NuevoPaciente extends Component {
         if((nombre !== "" && nombre !== " ") && 
             (telefono !== "" && telefono !== " ") && (cedula !== "" && cedula !== " "))
         {
-            console.log(nombre, ' ', telefono, ' ', cedula);
-            await window.api.postAgregarPaciente({ nombre: nombre, telefono:telefono, cedula:cedula });
+            let ret = await window.api.postAgregarPaciente({ nombre: nombre, telefono:telefono, cedula:cedula });
+
+            if(ret){
+                this.setState({ title:'ok'})
+            }else{
+                this.setState({ title:'error'})
+            }
         }
         else
         {
+            this.setState({ title:'error'})
             console.log('eeee bobo');
         }
     }
 
     render() { 
+        let title;
+        if(this.state.title === 'inicial'){
+            title = (<div>
+                        <h2>Agregar un paciente</h2>
+                        <p>Completa este formulario con los datos del paciente a agregar.</p>
+                    </div>)
+        }else if(this.state.title === 'ok'){
+            title = (<div>
+                        <h2>Paciente agregado con exito</h2>
+                        <p>Completa este formulario con los datos del paciente a agregar.</p>
+                    </div>)
+        }else if(this.state.title === 'error'){
+            title = (<div>
+                <h2>Error al agregar paciente</h2>
+                <p>El paciente ya existe o hay datos incompletos en el formilario.</p>
+            </div>)
+        }
         return (  
             <div>
-                <div>
-                    <h2>Agregar un paciente</h2>
-                    <p>Completa este formulario con los datos del paciente a agregar.</p>
-                </div>
+                {title}
 
                 <form onSubmit={this.handleSubmit} className="NuevoPaciente">
 

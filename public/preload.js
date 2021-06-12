@@ -34,9 +34,19 @@ contextBridge.exposeInMainWorld('api', {
   //POST METHODS
   postAgregarArchivos: (args) => ipcRenderer.invoke('post-archivos', args),
   
-  postAgregarConsulta: (args) => ipcRenderer.invoke('post-agregar-consulta', args),
+  postAgregarConsulta: (args) => {
+    return new Promise(resolve => {
+      ipcRenderer.invoke('post-agregar-consulta', args);
+      ipcRenderer.once('return-conslta-agregada', (_, result) => { resolve(result) });
+    })
+  },
 
-  postAgregarPaciente: (args) => ipcRenderer.invoke('post-agregar-paciente', args),
+  postAgregarPaciente: (args) => {
+      return new Promise(resolve => {
+        ipcRenderer.invoke('post-agregar-paciente', args);
+        ipcRenderer.once('return-paciente-agregado', (_, result) => { resolve(result) });
+    })
+  },
 
   //DELETE METHODS
   deleteConsulta: (args) => ipcRenderer.invoke('delete-consulta', args),
