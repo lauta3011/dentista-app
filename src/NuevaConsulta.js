@@ -45,11 +45,17 @@ class NuevaConsulta extends Component {
         if((consulta.cedula !== "" && consulta.cedula !== " ") && (consulta.fecha !== "" && consulta.fecha !== " ") && 
             (consulta.descripcion !== "" && consulta.descripcion !== " ") && (consulta.costo !== "" && consulta.costo !== " "))
         {
-            await window.api.postAgregarConsulta({ consulta: consulta });
+            let ret = await window.api.postAgregarConsulta({ consulta: consulta });
+            
+            if(ret){
+                this.setState({nombre:'agregado'});
+            }else {
+                this.setState({nombre:'error'});
+            }
         }
         else
         {
-            console.log(consulta)
+            this.setState({nombre:'error'});
         }
     }
 
@@ -58,6 +64,10 @@ class NuevaConsulta extends Component {
 
         if(this.state.nombre === ''){
             nombre = <div><h2 style={{margin:"0"}}>Seleccionar paciente</h2></div>
+        }else if(this.state.nombre === 'agregado'){
+            nombre = (<div><h2 style={{margin:"0"}}>Consulta agregada</h2></div>)
+        }else if(this.state.nombre === 'error'){
+            nombre = (<div><h2 style={{margin:"0"}}>Error agregando consulta</h2></div>)
         }else{
             nombre = (<div><h2 style={{margin:"0"}}>{this.state.nombre}</h2></div>)
         }
