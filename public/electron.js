@@ -8,8 +8,7 @@ let mainWindow;
 
 // Initializing a new database
 const db = new sqlite3.Database(
-  isDev
-    ? path.join(__dirname, '../db/database.db') // my root folder if in dev mode
+  isDev ? path.join(__dirname, '../db/database.db') // my root folder if in dev mode
     : path.join(process.resourcesPath, 'db/database.db'), // the resources path if in production build
   (err) => {
     if (err) {
@@ -25,7 +24,7 @@ const crearTablas = () => {
   db.serialize(() => {
     db.run('CREATE TABLE IF NOT EXISTS Paciente (Nombre TEXT NOT NULL, Telefono NUMERIC NOT NULL, Cedula NUMERIC NOT NULL)');
     db.run('CREATE TABLE IF NOT EXISTS Consulta (Paciente NUMERIC NOT NULL, Descripcion TEXT, Tipo TEXT NOT NULL, Fecha NUMERIC NOT NULL, Hora NUMERIC NOT NULL, Costo NUMERIC NOT NULL, Archivos TEXT, Completada INTEGER NOT NULL, Identificador TEXT)');
-    db.run('CREATE TABLE IF NOT EXISTS Archivos (Id INTEGER NOT NULL, Nombre TEXT NOT NULL, Consulta TEXT NOT NULL, Imagen BLOB NOT NULL)');
+    db.run('CREATE TABLE IF NOT EXISTS Archivos (Id INTEGER AUTO_INCREMENT, Nombre TEXT NOT NULL, Consulta TEXT NOT NULL, Imagen BLOB NOT NULL)');
   });
 }
 
@@ -139,35 +138,35 @@ ipcMain.handle('post-agregar-consulta', (event, args) => {
      
       if(err){
         console.log(err);
-        event.sender.send('return-conslta-agregada', false);        
+        event.sender.send('return-conslta-agregada', 'Error agregando la consulta');        
       }else{
 
         //si pudo agregar la consulta que agregue los archivos tmb
         if(args.consulta.archivo.length > 0){
           args.consulta.archivo.map((a) => {
-            let trimedPath = a.path.split('\\');
-            let shortedPath = trimedPath[trimedPath.length-3] + '\\' + trimedPath[trimedPath.length-2];        
-    
-            if(shortedPath != 'public\\imgs'){
-              let newPath = __dirname + '\\imgs\\' + a.name;
-              fs.rename(a.path, newPath, function(err) {
-                if(err) { 
-                  console.log(err);
-                  event.sender.send('return-conslta-agregada', false);
-                }
-              })
-            }
             db.run('INSERT INTO Archivos(Imagen, Nombre, Consulta) VALUES(?,?,?)', ['imagen', a.name, args.consulta.identificador], (err) => {
               if(err){
                 console.log(err);
-                event.sender.send('return-conslta-agregada', false);
+                event.sender.send('return-conslta-agregada', 'Error agregando imagen');
               }else{
-                event.sender.send('return-conslta-agregada', true);
+                let trimedPath = a.path.split('\\');
+                let shortedPath = trimedPath[trimedPath.length-3] + '\\' + trimedPath[trimedPath.length-2];        
+        
+                if(shortedPath != 'public\\imgs'){
+                  let newPath = __dirname + '\\imgs\\' + a.name;
+                  fs.rename(a.path, newPath, function(err) {
+                    if(err) { 
+                      console.log(err);
+                      event.sender.send('return-conslta-agregada', 'Error agregando imagen');
+                    }
+                  })
+                }    
+                event.sender.send('return-conslta-agregada', 'Consulta agregada con exito');
               }
             })
           })
         }else{
-          event.sender.send('return-conslta-agregada', true);
+          event.sender.send('return-conslta-agregada', 'Consulta agregada con exito');
         }  
       }
     })
