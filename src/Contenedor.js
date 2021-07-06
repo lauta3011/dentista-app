@@ -15,6 +15,11 @@ function Contenedor() {
 
     const traerConsultas = async(cuando, cedula) => {
         const lista = await window.api.getConsultas({ cuando:cuando, cedula:cedula });
+        lista.map((c) => {
+            let fecha = c.Fecha.split('-');
+            let fixedFecha = fecha[2]+'/'+fecha[1]+'/'+fecha[0];
+            c.Fecha = fixedFecha;
+        })
         setConsultas(lista);
     }
 

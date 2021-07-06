@@ -14,7 +14,7 @@ function Galeria(props) {
             <div style={{display:'inline-flex'}}>
                 {props.galeria.map((i, index) => (
                     <div key={index} className="imagen">
-                        <Imagen alt={i} imagen={"http://localhost:8080/" + props.galeria[index].Nombre}/>
+                        <Imagen alt={i} imagen={"http://localhost:4200/" + props.galeria[index].Nombre}/>
                     </div>                
                 ))}    
             </div>

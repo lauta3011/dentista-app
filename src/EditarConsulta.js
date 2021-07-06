@@ -9,12 +9,13 @@ function EditarConsulta(props) {
 
     const guardarEditarConsulta = async() => {
         console.log(consultaNueva)
+
         if(consulta != consultaNueva || archivos.length > 0){
             if(archivos.length > 0){
                 let listaArchivos = [];
                 
                 for(var i = 0; i < archivos.length; i++){
-                    listaArchivos.push(archivos[i].name);
+                    listaArchivos.push({name:archivos[i].name, path:archivos[i].path});
                 }        
                 
                 await window.api.postAgregarArchivos({ identificador:consulta.Identificador, archivos:listaArchivos })
@@ -36,7 +37,7 @@ function EditarConsulta(props) {
                 
                 <TipoConsulta seleccionarTipo={(t) => setConsultaNueva(prevState => ({...prevState, Tipo:t}))}/>
 
-                <div className="contenedor"><label>Completada: </label><input defaultChecked={consulta.Completada} onChange={() => this.handleCheck()} type="checkbox"/></div>
+                <div className="contenedor"><label>Completada: </label><input defaultChecked={consulta.Completada} onChange={(e) => { setConsultaNueva(prevState => ({...prevState, Completada:e.target.checked}))} } type="checkbox"/></div>
                 <div className="contenedor"><label>Costo: </label><input type="text" onChange={(e) => {setConsultaNueva(prevState => ({...prevState, Costo:e.target.value})) }} defaultValue={consulta.Costo}/></div>
             </div>
 
