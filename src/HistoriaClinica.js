@@ -45,8 +45,7 @@ function HistoriaClinica(props) {
                     </div>
                 )
             }else{
-                // mostrarConsultas = <DetalleConsulta listaArchivos={archivos} mostrar={mostrar} consulta={detalle} handleEliminarConsulta={(identificador) => {eliminarConsulta(identificador)}} handleCerrarModal={() => { setMostrar('none'); setArchivos('vacio') }} />
-                mostrarConsultas = <DetalleConsulta mostrar={mostrar} handleEliminarConsutla={(identificador) => {eliminarConsulta(identificador)}} handleCerrarModal={() => setMostrar('none')} galeria={archivos} consulta={detalle} /> 
+                mostrarConsultas = <DetalleConsulta handleActualizar={() => { buscarHistoriaClinica(); } } mostrar={mostrar} handleEliminarConsutla={(identificador) => {eliminarConsulta(identificador)}} handleCerrarModal={() => setMostrar('none')} galeria={archivos} consulta={detalle} /> 
             }
         }
     }else{

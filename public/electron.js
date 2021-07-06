@@ -3,6 +3,7 @@ const isDev = require('electron-is-dev'); // To check if electron is in developm
 const path = require('path');
 const sqlite3 = require('sqlite3');
 const fs = require('fs');
+const { exec } = require('child_process');
 
 let mainWindow;
 
@@ -27,6 +28,15 @@ const crearTablas = () => {
     db.run('CREATE TABLE IF NOT EXISTS Archivos (Id INTEGER AUTO_INCREMENT, Nombre TEXT NOT NULL, Consulta TEXT NOT NULL, Imagen BLOB NOT NULL)');
   });
 }
+
+let imgPath = process.resourcesPath;
+
+exec('http-server '+imgPath+'\\imgs -p 4200', (err, stdout, stderr) => {
+  if(err){
+    console.log(stderr);
+  }
+  console.log(stdout);
+})
 
 // Initializing the Electron Window
 const createWindow = () => {
@@ -56,20 +66,20 @@ ipcMain.on('get-consultas', async(event, args) => {
     parameters = args.cuando
   }
 
-  console.log(parameters);
-    db.all(query , parameters, async(err, data) => {
-      if(err){
-        console.log(err);
-      }    
-          
-      data.forEach((row) => { 
-        rows.push(row);
-      })
-      event.sender.send('return-consultas', rows);
+  db.all(query , parameters, async(err, data) => {
+    if(err){
+      console.log(err);
+    }    
+        
+    data.forEach((row) => { 
+      rows.push(row);
     })
+    event.sender.send('return-consultas', rows);
+  })
 });
 
 ipcMain.on('get-archivos', async(event, args) => {
+  
   let archivos;
   db.all('SELECT a.Nombre FROM Archivos a, Consulta c WHERE c.Identificador = a.Consulta AND c.Identificador = ?', args.identificador, async(err, data) =>{
     if(err){
@@ -150,10 +160,22 @@ ipcMain.handle('post-agregar-consulta', (event, args) => {
                 event.sender.send('return-conslta-agregada', 'Error agregando imagen');
               }else{
                 let trimedPath = a.path.split('\\');
-                let shortedPath = trimedPath[trimedPath.length-3] + '\\' + trimedPath[trimedPath.length-2];        
-        
-                if(shortedPath != 'public\\imgs'){
-                  let newPath = __dirname + '\\imgs\\' + a.name;
+                let shortedPath = '\\' + trimedPath[trimedPath.length-2];
+
+                let trimmedDirname;
+
+                if(isDev){
+                  trimmedDirname = __dirname.split('\\');
+                  trimmedDirname.splice(trimmedDirname.length - 1);
+                }else{
+                  trimmedDirname = process.resourcesPath.split('\\');
+                }
+
+                trimmedDirname = trimmedDirname.toString().replace(/,/g,'\\');
+
+                if(shortedPath != '\\imgs'){
+                  let newPath = trimmedDirname + '\\imgs\\' + a.name;
+                  
                   fs.rename(a.path, newPath, function(err) {
                     if(err) { 
                       console.log(err);
@@ -174,12 +196,41 @@ ipcMain.handle('post-agregar-consulta', (event, args) => {
 })
 
 ipcMain.handle('post-archivos', async(event,args) => {
+  console.log(args)
   args.archivos.map((a) => {
     db.run('INSERT INTO Archivos(Imagen, Nombre, Consulta) VALUES(?,?,?)', ['imagen', a, args.identificador], (err) => {
       if(err){
         console.log(err);
+        event.sender.send('return-conslta-agregada', 'Error agregando imagen');
+      }else{
+        let trimedPath = a.path.split('\\');
+        let shortedPath = '\\' + trimedPath[trimedPath.length-2];
+
+        let trimmedDirname;
+
+        if(isDev){
+          trimmedDirname = __dirname.split('\\');
+          trimmedDirname.splice(trimmedDirname.length - 1);
+        }else{
+          trimmedDirname = process.resourcesPath.split('\\');
+        }
+
+        trimmedDirname = trimmedDirname.toString().replace(/,/g,'\\');
+
+        if(shortedPath != '\\imgs'){
+          let newPath = trimmedDirname + '\\imgs\\' + a.name;
+          
+          fs.rename(a.path, newPath, function(err) {
+            if(err) { 
+              console.log(err);
+              event.sender.send('return-conslta-agregada', 'Error agregando imagen');
+            }
+          })
+        }    
+        event.sender.send('return-conslta-agregada', 'Consulta agregada con exito');
       }
     })
+
   })
 })
 
@@ -196,9 +247,9 @@ ipcMain.handle('post-agregar-paciente', (event, args) => {
 
 ipcMain.handle('update-consulta', async(event, args) => {
 
-  let data = [args.cambios.Descripcion, args.cambios.Costo, args.cambios.Tipo, args.cambios.Identificador];
-  console.log(data);
-  db.run('UPDATE Consulta SET Descripcion = ?, Costo = ?, Tipo = ? WHERE Identificador = ?', data, (err) => {
+  let data = [args.cambios.Descripcion, args.cambios.Costo, args.cambios.Completada, args.cambios.Tipo, args.cambios.Identificador];
+  console.log(args);
+  db.run('UPDATE Consulta SET Descripcion = ?, Costo = ?, Completada = ?, Tipo = ? WHERE Identificador = ?', data, (err) => {
     if(err){
       console.log(err);
     }
@@ -248,6 +299,8 @@ app.whenReady().then(async () => {
 
 // Exiting the app
 app.on('window-all-closed', () => {
+  exec('npx kill-port 4200', (err, stdout, stderr))
+
   if (process.platform !== 'darwin') {
     app.quit();
   }

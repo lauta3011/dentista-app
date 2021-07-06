@@ -9,7 +9,7 @@ function VerConsulta(props) {
                 <div className="contenedor"><label>Descripcion: </label><p>{props.consulta.Descripcion}</p></div>
                 <div className="contenedor"><label>Tipo: </label><span>{props.consulta.Tipo}</span></div>
 
-                <div className="contenedor"><label>Completada: </label><input defaultChecked={props.consulta.Completada} onChange={() => this.handleCheck()} type="checkbox"/></div>
+                <div className="contenedor"><label>Completada: </label><input checked={props.consulta.Completada} readOnly type="checkbox"/></div>
                 <div className="contenedor"><label>Costo: </label><span>{props.consulta.Costo}</span></div>
                 </div>
 

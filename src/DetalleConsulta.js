@@ -10,12 +10,16 @@ function DetalleConsulta(props) {
 
     const guardarCambios = async(cambios) => {
         await window.api.modifyConsulta({cambios : cambios});
+        props.handleActualizar();
+        props.handleCerrarModal();
     }    
+
+
 
     let informacion;
     
     if(editar){
-        informacion = <EditarConsulta handleCerrar={() => { props.handleCerrarModal(); setEditar(false); setConsulta({}); }} handleGuardarCambios={(cambios) => {guardarCambios(cambios)}} listaArchivos={props.galeria} consulta={consulta}/>;        
+        informacion = <EditarConsulta handleCerrar={() => { props.handleCerrarModal(); setEditar(false); setConsulta({}); }} handleGuardarCambios={(cambios) => { guardarCambios(cambios); }} listaArchivos={props.galeria} consulta={consulta}/>;        
     }else{
         informacion = <VerConsulta listaArchivos={props.galeria} consulta={consulta}/>;
     }

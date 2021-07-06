@@ -18,7 +18,6 @@ function Consultas(props){
     let mostrarConsultas;
     
     useEffect(() => {
-        console.log(cuando)
         props.handleTraerConsultas(cuando);
     }, [cuando])
     
@@ -51,7 +50,7 @@ function Consultas(props){
             );
         }else{
             mostrarConsultas =(
-                <DetalleConsulta mostrar={mostrar} handleEliminarConsutla={(identificador) => {eliminarConsulta(identificador)}} handleCerrarModal={() => setMostrar('none')} galeria={archivos} consulta={detalle} /> 
+                <DetalleConsulta mostrar={mostrar} handleActualizar={() => { props.handleTraerConsultas(cuando); } } handleEliminarConsutla={(identificador) => {eliminarConsulta(identificador)}} handleCerrarModal={() => setMostrar('none')} galeria={archivos} consulta={detalle} /> 
             )
         }
     }else{
