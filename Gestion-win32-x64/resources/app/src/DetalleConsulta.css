@@ -1,0 +1,68 @@
+.Modal{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.FondoModal{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-color: #000;
+    opacity: 0.5;
+}
+
+.DetalleConsulta{
+    width: 80%;
+    left: 10%;
+    top: 10%;
+    position: relative;
+    background-color: white;
+    padding: 5px 0px 15px 20px;
+    border-radius: 15px;
+}
+
+.HeaderDetalle{
+    display: inline-flex;
+}
+
+.ActionButton{
+    height: 45px;
+    margin: 15px 5px;
+}
+
+label{
+   font-weight: bold;
+}
+ 
+p{
+     margin: 0px;
+ }
+
+.InfoConsulta{
+    text-align: left;
+}
+
+.InfoConsulta .contenedor{
+    margin: 15px 35px 15px 15px;
+}
+
+.contenedor input{
+    width: 10% !important;
+}
+
+/* .Info{
+    width: 40%;
+}
+
+.Info span{
+    float: right;
+} */
+
+.SubirArchivo {
+    background-color: lightblue;
+    margin: 15px 35px 15px 15px;
+    padding: 15px;
+}
