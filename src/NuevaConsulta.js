@@ -48,13 +48,23 @@ class NuevaConsulta extends Component {
             let ret = await window.api.postAgregarConsulta({ consulta: consulta });
             
             if(ret){
-                this.setState({nombre:ret});
+                this.setState({nombre:ret });
             }
         }
         else
         {
             this.setState({nombre:'Falta completar algun campo'});
         }
+        this.setState({
+            paciente : '',
+            fecha : '',
+            hora: '',
+            costo: '',
+            tipo: 'Ortodoncia',
+            archivo: [],
+            completada : false,
+            descripcion : '' 
+        });
     }
 
     render() { 
@@ -81,12 +91,12 @@ class NuevaConsulta extends Component {
 
                         <div className="Input">
                             <label htmlFor="txtFecha">Fecha</label>
-                            <input id="txtFecha" onChange={(e) => { this.setState({ fecha:e.target.value })}} type="date" />
+                            <input id="txtFecha" value={this.state.fecha} onChange={(e) => { this.setState({ fecha:e.target.value })}} type="date" />
                         </div>
 
                         <div className="Input">
                             <label htmlFor="txtHora">Hora</label>
-                            <input id="txtHora" onChange={(e) => { this.setState({ hora:e.target.value }) }} type="time" />
+                            <input id="txtHora" value={this.state.hora} onChange={(e) => { this.setState({ hora:e.target.value }) }} type="time" />
                         </div>
 
                         <div className="Input">
@@ -101,7 +111,7 @@ class NuevaConsulta extends Component {
                         
                         <div className="Input">
                             <label htmlFor="txtDescripcion">Descripcion</label>
-                            <textarea id="txtDescripcion" onChange={(e) => { this.setState({ descripcion:e.target.value })}} type="text" placeholder="Descripcion de la consulta"/>
+                            <textarea id="txtDescripcion" value={this.state.descripcion} onChange={(e) => { this.setState({ descripcion:e.target.value })}} type="text" placeholder="Descripcion de la consulta"/>
                         </div>
 
                         <div className="Input">
@@ -110,7 +120,7 @@ class NuevaConsulta extends Component {
 
                         <div className="Input">
                             <label htmlFor="flArchivo">Agregar un archivo</label>
-                            <input id="flArchivo" type="file" accept="image" onChange={(e) => { this.setState({archivo:e.target.files});}} multiple />
+                            <input id="flArchivo" value={this.state.archivo} type="file" accept="image" onChange={(e) => { this.setState({archivo:e.target.files});}} multiple />
                         </div>
 
                         <input className="Submit" onClick={this.handleSubmit} type="button" value="Crear consulta"/>
