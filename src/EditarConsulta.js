@@ -8,8 +8,6 @@ function EditarConsulta(props) {
     const [archivos, setArchivos] = useState([]);
 
     const guardarEditarConsulta = async() => {
-        console.log(consultaNueva)
-
         if(consulta != consultaNueva || archivos.length > 0){
             if(archivos.length > 0){
                 let listaArchivos = [];
