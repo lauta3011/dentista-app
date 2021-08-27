@@ -3,6 +3,12 @@ import Imagen from './Imagen.js';
 import './Galeria.css';
 
 function Galeria(props) {
+
+    const eliminarImagen = async(imagen) => {
+        console.log('eliminarrrr')
+        await window.api.deleteImagen({ imagen:imagen });
+    }
+
     let componenteGaleria = (
         <div style={{textAlign:'center',padding:'15px'}}>
             <span>Esta consulta no tiene archivos adjuntos.</span>
@@ -10,14 +16,13 @@ function Galeria(props) {
     );
         
     if(props.galeria != 'vacio' && props.galeria != undefined){
+        console.log(props.galeria)
         componenteGaleria = (
-            <div style={{display:'inline-flex'}}>
+            < >
                 {props.galeria.map((i, index) => (
-                    <div key={index} className="imagen">
-                        <Imagen alt={i} imagen={"http://localhost:4200/" + props.galeria[index].Nombre}/>
-                    </div>                
+                    <Imagen key={index} handleEliminarImagen={(imagen) => eliminarImagen(imagen)} alt={i} imagen={props.galeria[index]}/>
                 ))}    
-            </div>
+            </>
         )
     }else {
         componenteGaleria = (

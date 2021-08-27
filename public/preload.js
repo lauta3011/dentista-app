@@ -51,6 +51,8 @@ contextBridge.exposeInMainWorld('api', {
   //DELETE METHODS
   deleteConsulta: (args) => ipcRenderer.invoke('delete-consulta', args),
   
+  deleteImagen: (args) => ipcRenderer.invoke('delete-image', args),
+  
   //UPDATE METHODS
   modifyConsulta: (args) => ipcRenderer.invoke('update-consulta', args)
 

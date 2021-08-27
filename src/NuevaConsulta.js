@@ -120,7 +120,7 @@ class NuevaConsulta extends Component {
 
                         <div className="Input">
                             <label htmlFor="flArchivo">Agregar un archivo</label>
-                            <input id="flArchivo" value={this.state.archivo} type="file" accept="image" onChange={(e) => { this.setState({archivo:e.target.files});}} multiple />
+                            <input id="flArchivo" type="file" accept="image" onChange={(e) => { this.setState({archivo:e.target.files});}} multiple />
                         </div>
 
                         <input className="Submit" onClick={this.handleSubmit} type="button" value="Crear consulta"/>

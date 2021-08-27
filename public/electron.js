@@ -21,6 +21,21 @@ const db = new sqlite3.Database(
   }
 );
 
+// When the app is ready to load
+app.whenReady().then(() => {
+  /*    //crea el server de las imgs en el p 4200
+  exec('http-server '+imgPath+'\\imgs -p 4200', (err, stdout, stderr) => {
+    if(err){
+      console.log(stderr);
+    }
+    console.log(stdout);
+  })
+  */
+
+  // Create the mainWindow
+  createWindow().main(); 
+});
+
 const crearTablas = () => {
   db.serialize(() => {
     db.run('CREATE TABLE IF NOT EXISTS Paciente (Nombre TEXT NOT NULL, Telefono NUMERIC NOT NULL, Cedula NUMERIC NOT NULL)');
@@ -28,15 +43,12 @@ const crearTablas = () => {
     db.run('CREATE TABLE IF NOT EXISTS Archivos (Id INTEGER AUTO_INCREMENT, Nombre TEXT NOT NULL, Consulta TEXT NOT NULL, Imagen BLOB NOT NULL)');
   });
 }
-
-let imgPath = process.resourcesPath;
-
-exec('http-server '+imgPath+'\\imgs -p 4200', (err, stdout, stderr) => {
-  if(err){
-    console.log(stderr);
-  }
-  console.log(stdout);
-})
+let imgPath;
+if(isDev){
+  imgPath = process.__dirname;
+}else {
+  imgPath = process.resourcesPath;
+}
 
 // Initializing the Electron Window
 const createWindow = () => {
@@ -53,6 +65,7 @@ const createWindow = () => {
     },
   });
 
+///////////////////////////GET METHODS///////////////////////
 ipcMain.on('get-consultas', async(event, args) => {
   let rows = [];
   let query = 'SELECT p.Nombre as Nombre, c.Fecha, c.Hora, c.Descripcion, c.Completada, c.Costo, c.Identificador, c.Tipo FROM Consulta c, Paciente p WHERE p.Cedula = c.Paciente';
@@ -81,7 +94,7 @@ ipcMain.on('get-consultas', async(event, args) => {
 ipcMain.on('get-archivos', async(event, args) => {
   
   let archivos;
-  db.all('SELECT a.Nombre FROM Archivos a, Consulta c WHERE c.Identificador = a.Consulta AND c.Identificador = ?', args.identificador, async(err, data) =>{
+  db.all('SELECT a.Nombre, a.Imagen, a.Consulta FROM Archivos a, Consulta c WHERE c.Identificador = a.Consulta AND c.Identificador = ?', args.identificador, async(err, data) =>{
     if(err){
       console.log(err);
     }
@@ -117,6 +130,23 @@ ipcMain.on('get-paciente', async(event, args) => {
   })
 })
 
+/////////////////////DELETE METHODS/////////////////////
+ipcMain.handle('delete-image', (_, args) => {
+  let ret = true;
+console.log('la elimino eee')
+console.log(args)
+  db.serialize(() => {
+    db.run('DELETE FROM Archivos WHERE Consulta = ? AND Nombre = ?', [args.imagen.Consulta, args.imagen.Nombre], (err) => {
+      if(err){
+        console.log(err);
+        ret = false;
+      }
+    })
+    console.log('al parecer la elimine')
+    return ret;
+  })
+})
+
 ipcMain.handle('delete-consulta', (_, args) => {
   let ret = true;
   db.serialize(() => {
@@ -139,7 +169,7 @@ ipcMain.handle('delete-consulta', (_, args) => {
   return ret;
 })
 
-
+///////////////////POST METHODS/////////////////////////////
 ipcMain.handle('post-agregar-consulta', (event, args) => {
 
   db.serialize(() => {    
@@ -154,36 +184,14 @@ ipcMain.handle('post-agregar-consulta', (event, args) => {
         //si pudo agregar la consulta que agregue los archivos tmb
         if(args.consulta.archivo.length > 0){
           args.consulta.archivo.map((a) => {
-            db.run('INSERT INTO Archivos(Imagen, Nombre, Consulta) VALUES(?,?,?)', ['imagen', a.name, args.consulta.identificador], (err) => {
+            db.run('INSERT INTO Archivos(Imagen, Nombre, Consulta) VALUES(?,?,?)', [a.path, a.name, args.consulta.identificador], (err) => {
               if(err){
                 console.log(err);
                 event.sender.send('return-conslta-agregada', 'Error agregando imagen');
-              }else{
-                let trimedPath = a.path.split('\\');
-                let shortedPath = '\\' + trimedPath[trimedPath.length-2];
+              } else {
 
-                let trimmedDirname;
+                agregarThumbnail(a.path, args.consulta.identificador);
 
-                if(isDev){
-                  trimmedDirname = __dirname.split('\\');
-                  trimmedDirname.splice(trimmedDirname.length - 1);
-                }else{
-                  trimmedDirname = process.resourcesPath.split('\\');
-                }
-
-                trimmedDirname = trimmedDirname.toString().replace(/,/g,'\\');
-
-                if(shortedPath != '\\imgs'){
-                  let newPath = trimmedDirname + '\\imgs\\' + a.name;
-                  
-                  fs.rename(a.path, newPath, function(err) {
-                    if(err) { 
-                      console.log(err);
-                      event.sender.send('return-conslta-agregada', 'Error agregando imagen');
-                    }
-                  })
-                }    
-                event.sender.send('return-conslta-agregada', 'Consulta agregada con exito');
               }
             })
           })
@@ -195,42 +203,19 @@ ipcMain.handle('post-agregar-consulta', (event, args) => {
   });
 })
 
+function agregarThumbnail(path, consulta) {
+  
+}
+
 ipcMain.handle('post-archivos', async(event,args) => {
   console.log(args)
   args.archivos.map((a) => {
-    db.run('INSERT INTO Archivos(Imagen, Nombre, Consulta) VALUES(?,?,?)', ['imagen', a, args.identificador], (err) => {
+    db.run('INSERT INTO Archivos(Imagen, Nombre, Consulta) VALUES(?,?,?)', [a.path, a, args.identificador], (err) => {
       if(err){
         console.log(err);
         event.sender.send('return-conslta-agregada', 'Error agregando imagen');
-      }else{
-        let trimedPath = a.path.split('\\');
-        let shortedPath = '\\' + trimedPath[trimedPath.length-2];
-
-        let trimmedDirname;
-
-        if(isDev){
-          trimmedDirname = __dirname.split('\\');
-          trimmedDirname.splice(trimmedDirname.length - 1);
-        }else{
-          trimmedDirname = process.resourcesPath.split('\\');
-        }
-
-        trimmedDirname = trimmedDirname.toString().replace(/,/g,'\\');
-
-        if(shortedPath != '\\imgs'){
-          let newPath = trimmedDirname + '\\imgs\\' + a.name;
-          
-          fs.rename(a.path, newPath, function(err) {
-            if(err) { 
-              console.log(err);
-              event.sender.send('return-conslta-agregada', 'Error agregando imagen');
-            }
-          })
-        }    
-        event.sender.send('return-conslta-agregada', 'Consulta agregada con exito');
       }
     })
-
   })
 })
 
@@ -245,6 +230,7 @@ ipcMain.handle('post-agregar-paciente', (event, args) => {
   })
 })
 
+//////////////////////////UPDATE METHODS////////////////////////////////////
 ipcMain.handle('update-consulta', async(event, args) => {
 
   let data = [args.cambios.Descripcion, args.cambios.Costo, args.cambios.Completada, args.cambios.Tipo, args.cambios.Identificador];
@@ -264,14 +250,7 @@ ipcMain.handle('update-consulta', async(event, args) => {
   );
 
 	// Setting Window Icon - Asset file needs to be in the public/images folder.
-  mainWindow.setIcon(path.join(__dirname, 'images/appicon.ico'));
-
-	// In development mode, if the window has loaded, then load the dev tools.
-  if (isDev) {
-    mainWindow.webContents.on('did-frame-finish-load', () => {
-      mainWindow.webContents.openDevTools({ mode: 'detach' });
-    });
-  }
+  mainWindow.setIcon(path.join(__dirname, 'icon-dentista.png'));
 };
 
 // ((OPTIONAL)) Setting the location for the userdata folder created by an Electron app. It default to the AppData folder if you don't set it.
@@ -281,21 +260,6 @@ app.setPath(
     ? path.join(app.getAppPath(), 'userdata/') // In development it creates the userdata folder where package.json is
     : path.join(process.resourcesPath, 'userdata/') // In production it creates userdata folder in the resources folder
 );
-
-// When the app is ready to load
-app.whenReady().then(async () => {
-  await createWindow(); // Create the mainWindow
-
-  // If you want to add React Dev Tools
-  if (isDev) {
-    await session.defaultSession
-      .loadExtension(
-        path.join(__dirname, `../userdata/extensions/react-dev-tools`) // This folder should have the chrome extension for React Dev Tools. Get it online or from your Chrome extensions folder.
-      )
-      .then((name) => console.log('Dev Tools Loaded'))
-      .catch((err) => console.log(err));
-  }
-});
 
 // Exiting the app
 app.on('window-all-closed', () => {
