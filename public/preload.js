@@ -10,6 +10,13 @@ contextBridge.exposeInMainWorld('api', {
     })
   },
 
+  getConsulta: (args) => {
+    return new Promise(resolve => {
+      ipcRenderer.send('get-una-consulta', args);
+      ipcRenderer.once('return-una-consulta', (_, result) => { resolve(result) });
+    })
+  },
+
   getArchivos: (args) => {
     return new Promise(resolve => {
       ipcRenderer.send('get-archivos', args);

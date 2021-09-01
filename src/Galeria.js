@@ -5,8 +5,8 @@ import './Galeria.css';
 function Galeria(props) {
 
     const eliminarImagen = async(imagen) => {
-        console.log('eliminarrrr')
         await window.api.deleteImagen({ imagen:imagen });
+        props.handleActualizar();
     }
 
     let componenteGaleria = (
@@ -16,7 +16,6 @@ function Galeria(props) {
     );
         
     if(props.galeria != 'vacio' && props.galeria != undefined){
-        console.log(props.galeria)
         componenteGaleria = (
             < >
                 {props.galeria.map((i, index) => (
@@ -33,9 +32,9 @@ function Galeria(props) {
     }
 
     return (
-        <div>
+        <>
             {componenteGaleria}
-        </div>
+        </>
     );
 }
  

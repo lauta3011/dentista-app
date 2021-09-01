@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Galeria from './Galeria.js'
 import TipoConsulta from './TipoConsulta.js'
 
@@ -17,16 +17,12 @@ function EditarConsulta(props) {
                 }        
                 
                 await window.api.postAgregarArchivos({ identificador:consulta.Identificador, archivos:listaArchivos })
-            }else{
-                props.handleGuardarCambios(consultaNueva)
             }
-            props.handleCerrar();
+            props.handleGuardarCambios(consultaNueva)
+        }else {
+            props.handleCancelarEditar();
         }
     }
-
-    useEffect(() => {
-        setConsulta(props.consulta);
-    });
 
     return (
         <div className="EditarConsulta">
@@ -37,15 +33,6 @@ function EditarConsulta(props) {
 
                 <div className="contenedor"><label>Completada: </label><input defaultChecked={consulta.Completada} onChange={(e) => { setConsultaNueva(prevState => ({...prevState, Completada:e.target.checked}))} } type="checkbox"/></div>
                 <div className="contenedor"><label>Costo: </label><input type="text" onChange={(e) => {setConsultaNueva(prevState => ({...prevState, Costo:e.target.value})) }} defaultValue={consulta.Costo}/></div>
-            </div>
-
-            <div className="SubirArchivo">
-                <input type="file" accept="image" onChange={(e) => setArchivos(e.target.files) } multiple />
-
-                <div className="GaleriaArchivos">
-                    <Galeria galeria={props.listaArchivos}/>
-                </div>
-
             </div>
 
             <div style={{textAlign:'center'}}>

@@ -1,6 +1,6 @@
 .Imagen {
     background-color: white;
-    border-radius: 5px;
+    border-bottom: 1px solid lightgray;
     transition: 0.5s;
     display: flex;
 }

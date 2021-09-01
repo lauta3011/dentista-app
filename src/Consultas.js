@@ -9,50 +9,26 @@ function Consultas(props){
     let mesFormat = date.getMonth()+1;
     const mes = mesFormat < 10 ?  '0'+mesFormat : mesFormat;
     let fechaHoy = date.getUTCFullYear() + '-' + mes + '-' + dia;
-    const [mostrar, setMostrar] = useState('none');
+   
+    const [mostrar, setMostrar] = useState(false);
     const [detalle, setDetalle] = useState({});
     const [cuando, setCuando] = useState(fechaHoy);
-    const [archivos, setArchivos] = useState('vacio');
 
     const consultas = props.consultas;
     let mostrarConsultas;
     
     useEffect(() => {
         props.handleTraerConsultas(cuando);
-    }, [cuando])
-    
+    }, [cuando, mostrar])
 
     const eliminarConsulta = (identificador) => {
         props.handleEliminarConsulta(identificador);
     }
     
-    const traerArchivos = async(identificador) => {
-        const lista = await window.api.getArchivos({ identificador: identificador});
-        let listaArchivos = [];
-        
-        if(lista !== 'vacio'){
-            lista.map(a => (
-                listaArchivos.push(a)
-            ));
-        }else {
-            listaArchivos = lista;
-        }
-        setMostrar('initial');
-        setArchivos(listaArchivos);
-    }
-
     if(consultas.length > 0){
-        if(mostrar == 'none'){
             mostrarConsultas = (
-                <div>
-                    <TablaConsultas mostrarDetalleConsulta={(consulta) => { traerArchivos(consulta.Identificador); setDetalle(consulta); }} listaConsultas={consultas} />
-                </div>
+                <TablaConsultas mostrarDetalleConsulta={(consulta) => { setDetalle(consulta); setMostrar(!mostrar)}} listaConsultas={consultas} />
             );
-        }else{
-            mostrarConsultas =(
-                <DetalleConsulta mostrar={mostrar} handleActualizar={() => { props.handleTraerConsultas(cuando); } } handleEliminarConsutla={(identificador) => {eliminarConsulta(identificador)}} handleCerrarModal={() => setMostrar('none')} galeria={archivos} consulta={detalle} /> 
-            )
-        }
     }else{
         mostrarConsultas = (
             <div>
@@ -70,7 +46,8 @@ function Consultas(props){
                 </p>
             </div>
 
-            {mostrarConsultas}
+            {mostrarConsultas} 
+            {mostrar && <DetalleConsulta mostrar={mostrar} consulta={detalle} handleActualizar={() => { props.handleTraerConsultas(cuando); } } handleEliminarConsutla={(identificador) => {eliminarConsulta(identificador); setMostrar(!mostrar);}} handleCerrarModal={() => setMostrar(!mostrar)} />}
             
         </div>
     );
