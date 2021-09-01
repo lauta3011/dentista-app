@@ -6,7 +6,7 @@ class TablaHistoriaClinica extends Component {
     render() { 
         let tabla;
 
-        if(this.props.historia.nombre !== 'vacio'){
+        if(this.props.historia.length > 0){
             tabla = (
                     <div className="Tabla">
                         <table>
@@ -24,17 +24,11 @@ class TablaHistoriaClinica extends Component {
                                     <td>{c.Fecha}</td>
                                     <td>{c.Hora}</td>
                                     <td className="Descripcion">{c.Descripcion}</td>
-                                    <td className="VerDetalle"><span onClick={() =>  this.props.handleVerDetalle(c)}>Ver detalle</span></td>
+                                    <td className="VerDetalle" onClick={() =>  this.props.handleVerDetalle(c)}><span>Ver detalle</span></td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>                    
-                </div>
-            )
-        }else{
-            tabla = (
-                <div>
-                    {/* <span>No hay ningun paciente seleccionado.</span> */}
                 </div>
             )
         }

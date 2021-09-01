@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import './Imagen.css';
 
 function Imagen(props) {
-    console.log(props.imagen)
     return (  
         <div className="Imagen">
             <span className='nombre' onClick={() => window.open(props.imagen.Imagen)} >{props.imagen.Nombre}</span>

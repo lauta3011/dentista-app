@@ -38,8 +38,8 @@ app.whenReady().then(() => {
 
 const crearTablas = () => {
   db.serialize(() => {
-    db.run('CREATE TABLE IF NOT EXISTS Paciente (Nombre TEXT NOT NULL, Telefono NUMERIC NOT NULL, Cedula NUMERIC NOT NULL)');
-    db.run('CREATE TABLE IF NOT EXISTS Consulta (Paciente NUMERIC NOT NULL, Descripcion TEXT, Tipo TEXT NOT NULL, Fecha NUMERIC NOT NULL, Hora NUMERIC NOT NULL, Costo NUMERIC NOT NULL, Archivos TEXT, Completada INTEGER NOT NULL, Identificador TEXT)');
+    db.run('CREATE TABLE IF NOT EXISTS Paciente (Nombre TEXT NOT NULL, Telefono NUMERIC NOT NULL, Cedula NUMERIC NOT NULL UNIQUE)');
+    db.run('CREATE TABLE IF NOT EXISTS Consulta (Paciente NUMERIC NOT NULL, Descripcion TEXT, Tipo TEXT NOT NULL, Fecha NUMERIC NOT NULL, Hora NUMERIC NOT NULL, Costo NUMERIC NOT NULL, Archivos TEXT, Completada INTEGER NOT NULL, Identificador TEXT UNIQUE)');
     db.run('CREATE TABLE IF NOT EXISTS Archivos (Id INTEGER AUTO_INCREMENT, Nombre TEXT NOT NULL, Consulta TEXT NOT NULL, Imagen BLOB NOT NULL)');
   });
 }
@@ -68,18 +68,8 @@ const createWindow = () => {
 ///////////////////////////GET METHODS///////////////////////
 ipcMain.on('get-consultas', async(event, args) => {
   let rows = [];
-  let query = 'SELECT p.Nombre as Nombre, c.Fecha, c.Hora, c.Descripcion, c.Completada, c.Costo, c.Identificador, c.Tipo FROM Consulta c, Paciente p WHERE p.Cedula = c.Paciente';
-  let parameters = [];
-
-  if(args.cuando == 'historia'){
-    query = 'SELECT p.Nombre as Nombre, c.Fecha, c.Hora, c.Descripcion, c.Completada, c.Costo, c.Identificador, c.Tipo FROM Consulta c, Paciente p WHERE p.Cedula = c.Paciente AND c.Paciente = ?';
-    parameters = args.cedula ;
-  }else{
-    query += ' AND c.Fecha = ? ';
-    parameters = args.cuando
-  }
-
-  db.all(query , parameters, async(err, data) => {
+console.log(args)
+  db.all('SELECT p.Nombre as Nombre, c.Fecha, c.Hora, c.Descripcion, c.Completada, c.Costo, c.Identificador, c.Tipo FROM Consulta c, Paciente p WHERE p.Cedula = c.Paciente AND c.Fecha = ?' , args.cuando, async(err, data) => {
     if(err){
       console.log(err);
     }    
@@ -110,8 +100,7 @@ ipcMain.on('get-archivos', async(event, args) => {
 })
 
 ipcMain.on('get-historia-clinica', async(event, arg) => {
-  db.all('SELECT p.Nombre as Nombre, c.Fecha, c.Hora, c.Descripcion, c.Completada' +
-  ' FROM Consulta c, Paciente p WHERE p.Cedula = c.Paciente AND c.Paciente LIKE ?', '%' + arg.cedula + '%', async(err, data) => {
+  db.all('SELECT p.Nombre as Nombre, c.Fecha, c.Hora, c.Descripcion, c.Completada, c.Costo, c.Identificador, c.Tipo FROM Consulta c, Paciente p WHERE p.Cedula = c.Paciente AND c.Paciente LIKE ?', '%' + arg.cedula + '%', async(err, data) => {
     if(err){
     console.log('err')
   }      
@@ -130,11 +119,19 @@ ipcMain.on('get-paciente', async(event, args) => {
   })
 })
 
+ipcMain.on('get-una-consulta', async(event, args) => {
+  db.all('SELECT p.Nombre as Nombre, c.Fecha, c.Hora, c.Descripcion, c.Completada, c.Costo, c.Identificador, c.Tipo FROM Consulta c, Paciente p WHERE c.Identificador = ? ', args.Identificador, async(err, row) => {
+    if(err) {
+      console.log('error trayendo la consulta ' + err);
+    }
+    event.sender.send('return-una-consulta', row);
+  })
+})
+
 /////////////////////DELETE METHODS/////////////////////
 ipcMain.handle('delete-image', (_, args) => {
   let ret = true;
-console.log('la elimino eee')
-console.log(args)
+
   db.serialize(() => {
     db.run('DELETE FROM Archivos WHERE Consulta = ? AND Nombre = ?', [args.imagen.Consulta, args.imagen.Nombre], (err) => {
       if(err){
@@ -188,11 +185,8 @@ ipcMain.handle('post-agregar-consulta', (event, args) => {
               if(err){
                 console.log(err);
                 event.sender.send('return-conslta-agregada', 'Error agregando imagen');
-              } else {
-
-                agregarThumbnail(a.path, args.consulta.identificador);
-
-              }
+              } 
+              event.sender.send('return-conslta-agregada', 'Consulta agregada con exito');
             })
           })
         }else{
@@ -203,14 +197,10 @@ ipcMain.handle('post-agregar-consulta', (event, args) => {
   });
 })
 
-function agregarThumbnail(path, consulta) {
-  
-}
-
 ipcMain.handle('post-archivos', async(event,args) => {
   console.log(args)
   args.archivos.map((a) => {
-    db.run('INSERT INTO Archivos(Imagen, Nombre, Consulta) VALUES(?,?,?)', [a.path, a, args.identificador], (err) => {
+    db.run('INSERT INTO Archivos(Imagen, Nombre, Consulta) VALUES(?,?,?)', [a.path, a.name, args.identificador], (err) => {
       if(err){
         console.log(err);
         event.sender.send('return-conslta-agregada', 'Error agregando imagen');
@@ -232,9 +222,9 @@ ipcMain.handle('post-agregar-paciente', (event, args) => {
 
 //////////////////////////UPDATE METHODS////////////////////////////////////
 ipcMain.handle('update-consulta', async(event, args) => {
-
   let data = [args.cambios.Descripcion, args.cambios.Costo, args.cambios.Completada, args.cambios.Tipo, args.cambios.Identificador];
-  console.log(args);
+  console.log(data)
+  console.log(args)
   db.run('UPDATE Consulta SET Descripcion = ?, Costo = ?, Completada = ?, Tipo = ? WHERE Identificador = ?', data, (err) => {
     if(err){
       console.log(err);

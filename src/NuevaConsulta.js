@@ -39,32 +39,28 @@ class NuevaConsulta extends Component {
             completada: this.state.completada,
             descripcion: this.state.descripcion
         };
-         
-        console.log(consulta);
-        
+                 
         if((consulta.cedula !== "" && consulta.cedula !== " ") && (consulta.fecha !== "" && consulta.fecha !== " ") && 
             (consulta.descripcion !== "" && consulta.descripcion !== " ") && (consulta.costo !== "" && consulta.costo !== " "))
         {
             let ret = await window.api.postAgregarConsulta({ consulta: consulta });
-            
-            if(ret){
-                this.setState({nombre:ret });
-            }
+         console.log('la agregue')   
+            this.setState({
+                nombre: ret,
+                paciente: '',
+                fecha: '',
+                costo: '',
+                hora: '',
+                completada: false,
+                archivo: [],
+                descripcion: ''  
+            })
+            document.getElementById('flArchivo').value = null;
         }
         else
         {
             this.setState({nombre:'Falta completar algun campo'});
         }
-        this.setState({
-            paciente : '',
-            fecha : '',
-            hora: '',
-            costo: '',
-            tipo: 'Ortodoncia',
-            archivo: [],
-            completada : false,
-            descripcion : '' 
-        });
     }
 
     render() { 
