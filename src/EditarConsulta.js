@@ -35,6 +35,15 @@ function EditarConsulta(props) {
                 <div className="contenedor"><label>Costo: </label><input type="text" onChange={(e) => {setConsultaNueva(prevState => ({...prevState, Costo:e.target.value})) }} defaultValue={consulta.Costo}/></div>
             </div>
 
+            <div className="SubirArchivo">
+                <input style={{marginBottom:'15px'}} type="file" accept="image" onChange={(e) => setArchivos(e.target.files)} multiple />
+                    
+                <div className="GaleriaArchivos">
+                    <Galeria handleActualizar={() => props.actualizarImagenes()} galeria={props.listaArchivos}/>
+                </div>
+
+            </div>
+
             <div style={{textAlign:'center'}}>
                 <input type="button" value="Guardar cambios" onClick={() => { guardarEditarConsulta() }}/>
             </div>

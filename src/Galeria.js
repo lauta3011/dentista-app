@@ -18,9 +18,9 @@ function Galeria(props) {
     if(props.galeria != 'vacio' && props.galeria != undefined){
         componenteGaleria = (
             < >
-                {props.galeria.map((i, index) => (
+                 {props.galeria.map((i, index) => (
                     <Imagen key={index} handleEliminarImagen={(imagen) => eliminarImagen(imagen)} alt={i} imagen={props.galeria[index]}/>
-                ))}    
+                ))}     
             </>
         )
     }else {
