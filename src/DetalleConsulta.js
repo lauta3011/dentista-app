@@ -67,15 +67,6 @@ function DetalleConsulta(props) {
 
                     {informacion}
 
-                    <div className="SubirArchivo">
-                        <input type="file" accept="image" onChange={(e) => setArchivos(e.target.files) } multiple />
-
-                        <div className="GaleriaArchivos">
-                            <Galeria handleActualizar={() => props.actualizarImagenes()} galeria={props.listaArchivos}/>
-                        </div>
-
-                    </div>
-
                 </div>
             </div>
         </div>  
