@@ -6,7 +6,8 @@ class NuevoPaciente extends Component {
         title : "inicial",
         nombre : "",
         telefono : "",
-        cedula : ""
+        cedula : "",
+        otros : ""
      }
 
     handleSubmit = async(event) => {
@@ -14,11 +15,12 @@ class NuevoPaciente extends Component {
         let nombre = this.state.nombre;
         let telefono = this.state.telefono;
         let cedula = this.state.cedula;
+        let otros = this.state.otros;
         
         if((nombre !== "" && nombre !== " ") && 
             (telefono !== "" && telefono !== " ") && (cedula !== "" && cedula !== " "))
         {
-            let ret = await window.api.postAgregarPaciente({ nombre: nombre, telefono:telefono, cedula:cedula });
+            let ret = await window.api.postAgregarPaciente({ nombre: nombre, telefono:telefono, cedula:cedula, otros: otros });
 
             if(ret){
                 this.setState({ title:'ok'})
@@ -70,6 +72,11 @@ class NuevoPaciente extends Component {
                     <div className="Input">
                         <label htmlFor="txtTelefono">Telefono</label>
                         <input id="txtTelefono" type="text" value={this.state.telefono} onChange={(e) => { this.setState({ telefono:e.target.value }) }} />
+                    </div>
+
+                    <div className="Input">
+                        <label htmlFor="txtOtros">Otros datos</label>
+                        <textarea id="txtOtros" value={this.state.otros} onChange={(e) => { this.setState({ otros:e.target.value }) }} />
                     </div>
 
                     <div className="Submit">

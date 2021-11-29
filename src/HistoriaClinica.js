@@ -1,11 +1,13 @@
 import { React, useState, useEffect } from 'react';
-import TablaHistoriaClinica from './TablaHistoriaClinica.js';
+import DatosPaciente from './DatosPaciente.js';
 import DetalleConsulta from './DetalleConsulta.js';
+import Flecha from './Flecha.js';
+import TablaHistoriaClinica from './TablaHistoriaClinica.js';
 import Buscador from './Buscador.js';
 
 function HistoriaClinica(props) {
     const [mostrar, setMostrar] = useState(false);
-    const [paciente, setPaciente] = useState({Nombre:'Historia clinica'});
+    const [paciente, setPaciente] = useState();
     const [detalle, setDetalle] = useState({});
     const [archivos, setArchivos] = useState();
     const [consultas, setConsultas] = useState([]);
@@ -36,31 +38,29 @@ function HistoriaClinica(props) {
         setArchivos(listaArchivos);
     }
 
-    let titulo;
-    let mostrarConsultas;
+    let historiaClinica = '';
+    let mostrarConsultas = '';
 
     if(paciente != {}){
-        titulo = <h2>{paciente.Nombre}</h2>
+        historiaClinica = <DatosPaciente paciente={paciente}/>
         if(props.consultas.length > 0){
             mostrarConsultas = <TablaHistoriaClinica historia={consultas} handleVerDetalle={(consulta) => { traerArchivos(consulta.Identificador); setMostrar(!mostrar); setDetalle(consulta)}} />
         }else {
-            mostrarConsultas = (
-                <div>
-                    <span>La historia clinica de este paciente esta vacia.</span>
-                </div>
-            )
+            mostrarConsultas = ''
         }
     }
 
     return (  
         <div>
+            {paciente && <Flecha volver={() => setPaciente(null) }/>}
             <div>
-                {titulo}
+                <h2>Historia clinica</h2>
                 <span>Busca el nombre de un paciente para traer toda su historia clinica.</span>
             </div>
             
-            <Buscador getPaciente={(paciente) => {buscarHistoriaClinica(paciente.Cedula); setPaciente(paciente)}}/>
-            {mostrarConsultas}
+            {!paciente && <Buscador getPaciente={(paciente) => {buscarHistoriaClinica(paciente.Cedula); setPaciente(paciente)}}/>}
+            {paciente && historiaClinica}
+            {paciente && mostrarConsultas}
             {mostrar && <DetalleConsulta handleActualizar={() => buscarHistoriaClinica(paciente.Cedula) } handleEliminarConsutla={(identificador) => { eliminarConsulta(identificador); setMostrar(!mostrar)}} handleCerrarModal={() => setMostrar(!mostrar)} galeria={archivos} consulta={detalle} />}
 
         </div>

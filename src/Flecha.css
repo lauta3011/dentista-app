@@ -1,0 +1,7 @@
+.Flecha img {
+    height: 50px;
+    transform: rotate(180deg);
+    left: 20px;
+    position: absolute;
+    opacity: .7;
+}
