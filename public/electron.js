@@ -210,7 +210,7 @@ ipcMain.handle('post-archivos', async(event,args) => {
 })
 
 ipcMain.handle('post-agregar-paciente', (event, args) => {
-  db.run('INSERT INTO Paciente(Nombre, Telefono, Cedula) VALUES(?,?,?)', [args.nombre, args.telefono, args.cedula], (err) => {
+  db.run('INSERT INTO Paciente(Nombre, Telefono, Cedula, Otros) VALUES(?,?,?,?)', [args.nombre, args.telefono, args.cedula, args.otros], (err) => {
     if(err){
       event.sender.send('return-paciente-agregado', false);
       console.log(err);

@@ -1,0 +1,26 @@
+.DatosPaciente{
+    padding: 25px;
+    height: 150px;
+}
+
+.Principal {
+    float: left;
+    display: flex;
+}
+
+.Principal div {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-left: 10px;
+}
+
+.Informacion {
+    float: right;
+    width: 60%;
+    text-align: left;
+}
+
+.Informacion textarea {
+    width: 100%;
+}

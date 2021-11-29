@@ -2,6 +2,11 @@
   text-align: center;
 }
 
+.App .Contenedor {
+  margin-top: 100px;
+  padding-bottom: 15px;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;

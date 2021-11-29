@@ -16,6 +16,10 @@
     width: 100%;
 }
 
+.Input textarea {
+    height: 50px;
+}
+
 .Submit{
     margin: 15px 0;
 }

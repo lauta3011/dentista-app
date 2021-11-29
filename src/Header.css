@@ -1,5 +1,8 @@
 .Header{
     background-color: lightblue;
     display: flex;
+    position: fixed;
+    width: 100%;
+    top: 0;
     /* margin-bottom: 10%; */
 }
