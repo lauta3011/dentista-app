@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Buscador from './Buscador';
 import TipoConsulta from './TipoConsulta';
+import MiniDatosPaciente from './MiniDatosPaciente';
 import './NuevaConsulta.css';
 
 class NuevaConsulta extends Component {
@@ -13,7 +14,9 @@ class NuevaConsulta extends Component {
         tipo: 'Ortodoncia',
         archivo: [],
         completada : false,
-        descripcion : ''
+        descripcion : '',
+        datos : '',
+        error: false
     }
 
     handleSubmit = async() => {        
@@ -41,10 +44,9 @@ class NuevaConsulta extends Component {
         };
                  
         if((consulta.cedula !== "" && consulta.cedula !== " ") && (consulta.fecha !== "" && consulta.fecha !== " ") && 
-            (consulta.descripcion !== "" && consulta.descripcion !== " ") && (consulta.costo !== "" && consulta.costo !== " "))
+            (consulta.costo !== "" && consulta.costo !== " "))
         {
             let ret = await window.api.postAgregarConsulta({ consulta: consulta });
-         console.log('la agregue')   
             this.setState({
                 nombre: ret,
                 paciente: '',
@@ -53,13 +55,14 @@ class NuevaConsulta extends Component {
                 hora: '',
                 completada: false,
                 archivo: [],
-                descripcion: ''  
+                descripcion: '',
+                error:false
             })
             document.getElementById('flArchivo').value = null;
         }
         else
         {
-            this.setState({nombre:'Falta completar algun campo'});
+            this.setState({error:true});
         }
     }
 
@@ -82,8 +85,8 @@ class NuevaConsulta extends Component {
                 <form className="NuevaConsulta">
                     <div className="InnerContenedor">
 
-                        {nombre}
-                        <Buscador getPaciente={(p) => { this.setState({ paciente:p.Cedula }); this.setState({ nombre:p.Nombre}) }}/>
+                        {this.state.paciente && (<MiniDatosPaciente nombre={this.state.nombre} otros={this.state.datos} volver={() => this.setState({ nombre:'', paciente:'', datos:'' })}/>)}
+                        <Buscador getPaciente={(p) => { this.setState({ paciente:p.Cedula }); this.setState({ nombre:p.Nombre}); this.setState({ datos: p.Otros }) }}/>
 
                         <div className="Input">
                             <label htmlFor="txtFecha">Fecha</label>
@@ -121,6 +124,9 @@ class NuevaConsulta extends Component {
 
                         <input className="Submit" onClick={this.handleSubmit} type="button" value="Crear consulta"/>
 
+                        {this.state.error && <div style={{backgroundColor:'red', color:"white"}} className="Input"> 
+                            <span>Hay campos sin completar o con datos erroneos</span>
+                        </div>}
                     </div>
                     
                 </form>

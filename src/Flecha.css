@@ -1,7 +1,11 @@
-.Flecha img {
-    height: 50px;
-    transform: rotate(180deg);
-    left: 20px;
+.Flecha {
     position: absolute;
+    left: 20px;
+    top: 80px;
+}
+
+.Flecha img {
+    height: 35px;
+    transform: rotate(180deg);
     opacity: .7;
 }

@@ -7,6 +7,7 @@ class NuevoPaciente extends Component {
         nombre : "",
         telefono : "",
         cedula : "",
+        foto : "",
         otros : ""
      }
 
@@ -15,12 +16,17 @@ class NuevoPaciente extends Component {
         let nombre = this.state.nombre;
         let telefono = this.state.telefono;
         let cedula = this.state.cedula;
+        let foto = this.state.foto;
         let otros = this.state.otros;
         
         if((nombre !== "" && nombre !== " ") && 
             (telefono !== "" && telefono !== " ") && (cedula !== "" && cedula !== " "))
         {
-            let ret = await window.api.postAgregarPaciente({ nombre: nombre, telefono:telefono, cedula:cedula, otros: otros });
+            if(foto !== undefined) {
+                foto = foto.path;
+            }
+
+            let ret = await window.api.postAgregarPaciente({ nombre: nombre, telefono:telefono, cedula:cedula, foto:foto, otros: otros });
 
             if(ret){
                 this.setState({ title:'ok'})
@@ -31,7 +37,7 @@ class NuevoPaciente extends Component {
         else
         {
             this.setState({ title:'error'})
-            console.log('eeee bobo');
+            console.log(foto);
         }
     }
 

@@ -3,7 +3,7 @@ import './DatosPaciente.css';
 import userImage from './images/Portrait_Placeholder.png';
 
 function DatosPaciente(props) {
-
+    console.log(props.paciente.Foto)
     return (
         <div className="DatosPaciente">
             <div className="Principal">

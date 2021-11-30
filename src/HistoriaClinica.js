@@ -53,14 +53,18 @@ function HistoriaClinica(props) {
     return (  
         <div>
             {paciente && <Flecha volver={() => setPaciente(null) }/>}
-            <div>
+
+            {!paciente && 
+            (<div>
                 <h2>Historia clinica</h2>
                 <span>Busca el nombre de un paciente para traer toda su historia clinica.</span>
-            </div>
-            
+            </div>)
+            }            
+
             {!paciente && <Buscador getPaciente={(paciente) => {buscarHistoriaClinica(paciente.Cedula); setPaciente(paciente)}}/>}
             {paciente && historiaClinica}
-            {paciente && mostrarConsultas}
+            {props.consultas.length > 0 && <h4>Consultas</h4>}
+            {props.consultas.length > 0 && mostrarConsultas}
             {mostrar && <DetalleConsulta handleActualizar={() => buscarHistoriaClinica(paciente.Cedula) } handleEliminarConsutla={(identificador) => { eliminarConsulta(identificador); setMostrar(!mostrar)}} handleCerrarModal={() => setMostrar(!mostrar)} galeria={archivos} consulta={detalle} />}
 
         </div>
